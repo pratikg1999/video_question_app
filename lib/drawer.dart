@@ -58,6 +58,7 @@ class DrawerState extends State<NavDrawer> {
             title: Text("Log out"),
             trailing: Icon(Icons.power_settings_new),
             onTap: () async {
+//              Navigator.pop(context); //Gives error
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -65,6 +66,7 @@ class DrawerState extends State<NavDrawer> {
                       child: CircularProgressIndicator(),
                     );
                   });
+//              await Future.delayed(Duration(seconds: 3), (){print("after 3 seconds");}); // await is neccessary
               int statusCode = await logOut();
               Navigator.pop(context);
               Navigator.of(context).pushNamedAndRemoveUntil(

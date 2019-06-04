@@ -25,3 +25,13 @@ Future<String> getCurrentTokenId() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   return preferences.getString("Token");
 }
+
+Future<bool> isKeyPresentInSP(String key) async  {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  return preferences.getKeys().contains(key);
+}
+
+Future<bool> removeKeyFromSP(String key) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  return  preferences.remove(key);
+}

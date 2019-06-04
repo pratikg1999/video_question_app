@@ -17,6 +17,9 @@ Future<int> logOut() async {
   var response = await request.send();
   if (response.statusCode == 200) {
     print("successfully logged out");
+    removeKeyFromSP(EMAIL_KEY_SP);
+    removeKeyFromSP(TOKEN_KEY_SP);
+    print("keys removed");
   }
   else{
     print("in logOut: unsucessfull logout");
@@ -35,11 +38,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   @override
+  void initState() async {
+    if(await isKeyPresentInSP(TOKEN_KEY_SP) && await isKeyPresentInSP(EMAIL_KEY_SP)){
+      print("already signed in");
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final formkey = GlobalKey<FormState>();
     String _email, _password;
 
-    _submit() {
+    _submit() async{
       if (formkey.currentState.validate()) {
         formkey.currentState.save();
 
@@ -52,18 +65,17 @@ class _LoginPageState extends State<LoginPage> {
         print(request);
         print(_email);
         print(_password);
-        request.send().then((response) async {
+        var response = await request.send();
           var t = await response.stream.bytesToString();
           var token = jsonDecode(t.toString());
           if (response.statusCode == 200) {
             print("User Logged In");
             saveCurrentLogin(token['Token Id']);
             saveInSP(EMAIL_KEY_SP, _email);
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
           }
-          ;
-        }).catchError((e) {
-          print(e);
-        });
+
 //        Navigator.of(context).pop();
 //        Navigator.of(context).pop();
 //        Navigator.push(
@@ -71,8 +83,6 @@ class _LoginPageState extends State<LoginPage> {
 //          MaterialPageRoute(
 //              builder: (context) => Ask()),
 //        );
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
       } else {
         print("INVALID");
       }
