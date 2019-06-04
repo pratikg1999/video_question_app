@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:teacher/saveCurrentLogin.dart';
+import 'package:teacher/shared_preferences_helpers.dart';
 import 'constants.dart';
 import "dart:convert";
 class Questions extends StatefulWidget{
@@ -25,9 +25,9 @@ class QuestionsState extends State<StatefulWidget>{
       var videos = jsonDecode(data);
 //      print(ok[0]["path"]);
 //      print(ok);
-      for(var v in videos){ 
-        request = http.MultipartRequest(method, url)
-      }
+//      for(var v in videos){
+//        request = http.MultipartRequest(method, url)
+//      }
       setState((){});
     });
   }

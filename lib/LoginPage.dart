@@ -2,10 +2,27 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:teacher/SignUpPage.dart';
-import 'package:teacher/saveCurrentLogin.dart';
+import 'package:teacher/shared_preferences_helpers.dart';
 import 'package:teacher/ask.dart';
 import 'package:http/http.dart' as http;
 import 'constants.dart';
+
+Future<int> logOut() async {
+  String tokenId = await getCurrentTokenId();
+  String email = await getFromSP(EMAIL_KEY_SP);
+  var logoutUri = Uri.http("${serverIP}:${serverPort}", "/logout");
+  http.MultipartRequest request = http.MultipartRequest("POST", logoutUri);
+  request.fields["tokenId"] = tokenId;
+  request.fields["email"] = email;
+  var response = await request.send();
+  if (response.statusCode == 200) {
+    print("successfully logged out");
+  }
+  else{
+    print("in logOut: unsucessfull logout");
+  }
+  return response.statusCode;
+}
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -17,17 +34,14 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
-
   @override
   Widget build(BuildContext context) {
     final formkey = GlobalKey<FormState>();
-    String _email,_password;
+    String _email, _password;
 
-    _submit(){
-      if(formkey.currentState.validate()) {
+    _submit() {
+      if (formkey.currentState.validate()) {
         formkey.currentState.save();
-
 
         var uri = new Uri.http("${serverIP}:${serverPort}", "/login");
 
@@ -38,16 +52,16 @@ class _LoginPageState extends State<LoginPage> {
         print(request);
         print(_email);
         print(_password);
-        request.send().then((response)async{
-
+        request.send().then((response) async {
           var t = await response.stream.bytesToString();
           var token = jsonDecode(t.toString());
-          if(response.statusCode == 200) {
+          if (response.statusCode == 200) {
             print("User Logged In");
             saveCurrentLogin(token['Token Id']);
-          };
-
-        }).catchError(( e){
+            saveInSP(EMAIL_KEY_SP, _email);
+          }
+          ;
+        }).catchError((e) {
           print(e);
         });
 //        Navigator.of(context).pop();
@@ -57,35 +71,30 @@ class _LoginPageState extends State<LoginPage> {
 //          MaterialPageRoute(
 //              builder: (context) => Ask()),
 //        );
-        Navigator.of(context).pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
-
-
-      }else{
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
+      } else {
         print("INVALID");
       }
     }
 
     var loginBtn = new RaisedButton(
-      onPressed: (){
+      onPressed: () {
         _submit();
-
       },
       child: new Text("LOGIN"),
       color: Colors.primaries[3],
     );
     var registerBtn = new FlatButton(
-        onPressed:(){
+        onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => SignUp()),
+            MaterialPageRoute(builder: (context) => SignUp()),
           );
         },
-        child: new Text("Create a new account")
-    );
+        child: new Text("Create a new account"));
     var loginForm = new Column(
       children: <Widget>[
-
         new Form(
           key: formkey,
           child: new Column(
@@ -94,9 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: new TextFormField(
                   onSaved: (val) => _email = val,
-                  validator: (val) {
-
-                  },
+                  validator: (val) {},
                   decoration: new InputDecoration(labelText: "Email"),
                 ),
               ),
@@ -112,7 +119,6 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ),
-
       ],
       crossAxisAlignment: CrossAxisAlignment.center,
     );
