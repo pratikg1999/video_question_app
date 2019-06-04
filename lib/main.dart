@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:teacher/SignUpPage.dart';
-import 'package:teacher/MyHomePage.dart';
+import 'package:teacher/LoginPage.dart';
 import 'package:teacher/answers.dart';
 import 'package:teacher/questions.dart';
+
+import 'ask.dart';
 
 
 void main() => runApp(MyApp());
@@ -19,9 +21,11 @@ class MyApp extends StatelessWidget {
       routes: <String,WidgetBuilder>{
         '/SignUp' : (context) => new SignUp(),
         '/answers' : (context) => new Answers(),
-        '/questions' : (context) => new Questions()
+        '/questions' : (context) => new Questions(),
+        '/login': (context) => LoginPage(),
+        '/ask': (context) => Ask(),
       },
-      home: MyHomePage(title: 'Video Question App'),
+      home: LoginPage(title: 'Video Question App'),
 
     );
   }

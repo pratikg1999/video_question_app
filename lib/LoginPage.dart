@@ -5,20 +5,19 @@ import 'package:teacher/SignUpPage.dart';
 import 'package:teacher/saveCurrentLogin.dart';
 import 'package:teacher/ask.dart';
 import 'package:http/http.dart' as http;
+import 'constants.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  LoginPage({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _LoginPageState extends State<LoginPage> {
 
-  static String serverIP = "10.196.4.51";
-  static String serverPort = "8080";
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +32,6 @@ class _MyHomePageState extends State<MyHomePage> {
         var uri = new Uri.http("${serverIP}:${serverPort}", "/login");
 
         var request = new http.MultipartRequest("POST", uri);
-
 
         request.fields['email'] = _email;
         request.fields['password'] = _password;
@@ -52,11 +50,14 @@ class _MyHomePageState extends State<MyHomePage> {
         }).catchError(( e){
           print(e);
         });
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Ask()),
-        );
+//        Navigator.of(context).pop();
+//        Navigator.of(context).pop();
+//        Navigator.push(
+//          context,
+//          MaterialPageRoute(
+//              builder: (context) => Ask()),
+//        );
+        Navigator.of(context).pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
 
 
       }else{
@@ -122,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: new Container(
         decoration: new BoxDecoration(
           image: new DecorationImage(
-              image: new AssetImage("assets/login_background.jpg"),
+              image: new AssetImage("assets/images/login_background.jpg"),
               fit: BoxFit.cover),
         ),
         child: new Center(

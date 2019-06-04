@@ -6,3 +6,8 @@ saveCurrentLogin(String  token) async {
   preferences.setString("Token", token);
 
 }
+
+Future<String> getCurrentTokenId() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  return preferences.getString("Token");
+}

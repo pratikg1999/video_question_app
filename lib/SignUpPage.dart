@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:teacher/saveCurrentLogin.dart';
 import 'dart:io';
 import 'dart:async';
+import 'constants.dart';
 
 class SignUp extends StatefulWidget {
 
@@ -23,10 +24,6 @@ class SignUpState extends State<SignUp> {
   int _age;
   String _phone;
   bool _emailValid;
-
-  static String serverIP = "10.196.4.51";
-  static String serverPort = "8080";
-
 
   @override
   Widget build(BuildContext context) {

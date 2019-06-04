@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'constants.dart';
 
 class NavDrawer extends StatefulWidget{
   final String userName;
@@ -41,6 +42,11 @@ class DrawerState extends State<NavDrawer>{
             title: Text("Close"),
             trailing: Icon(Icons.close),
             onTap: ()=> Navigator.of(context).pop(),
+          ),
+          ListTile(
+            title: Text("Log out"),
+            trailing: Icon(Icons.power_settings_new),
+            onTap: () => Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false),
           ),
         ],
       ),

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:teacher/video.dart';
 import 'package:teacher/drawer.dart';
+import 'package:http/http.dart' as http;
+import 'package:teacher/saveCurrentLogin.dart';
+
+
 
 class Ask extends StatefulWidget {
 
@@ -11,8 +15,10 @@ class Ask extends StatefulWidget {
 }
 
 class AskState extends State<Ask> {
+
   @override
   Widget build(BuildContext context) {
+
     return new Scaffold(
         appBar: new AppBar(
           title: new Text("Video Question App"),
@@ -44,4 +50,6 @@ class AskState extends State<Ask> {
           ),
         ));
   }
+
+
 }
