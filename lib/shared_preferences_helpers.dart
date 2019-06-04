@@ -2,11 +2,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final EMAIL_KEY_SP = "email";
 final TOKEN_KEY_SP = "Token";
+final USER_NAME_SP = "Name";
 
 saveCurrentLogin(String  token) async {
 
   SharedPreferences preferences = await SharedPreferences.getInstance();
-  preferences.setString("Token", token);
+  preferences.setString(TOKEN_KEY_SP, token);
 
 }
 
@@ -23,7 +24,7 @@ Future<String> getFromSP(String key) async {
 
 Future<String> getCurrentTokenId() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
-  return preferences.getString("Token");
+  return preferences.getString(TOKEN_KEY_SP);
 }
 
 Future<bool> isKeyPresentInSP(String key) async  {

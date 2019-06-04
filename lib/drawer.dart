@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'package:teacher/LoginPage.dart';
+import 'shared_preferences_helpers.dart';
 
 class NavDrawer extends StatefulWidget {
   final String userName;
@@ -59,6 +60,8 @@ class DrawerState extends State<NavDrawer> {
             trailing: Icon(Icons.power_settings_new),
             onTap: () async {
 //              Navigator.pop(context); //Gives error
+              print(await isKeyPresentInSP(TOKEN_KEY_SP));
+              print(await isKeyPresentInSP(EMAIL_KEY_SP));
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -68,9 +71,13 @@ class DrawerState extends State<NavDrawer> {
                   });
 //              await Future.delayed(Duration(seconds: 3), (){print("after 3 seconds");}); // await is neccessary
               int statusCode = await logOut();
-              Navigator.pop(context);
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/login', (Route<dynamic> route) => false);
+              Navigator.pop(context);//hiding the progress dialog
+              if(statusCode==200) {
+//                Navigator.of(context).pushNamed('/login');
+                Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+              }else{
+                Scaffold.of(context).showSnackBar(new SnackBar(content: Text("Unable to logout")));
+              }
             },
           ),
           ListTile(

@@ -15,6 +15,21 @@ class Ask extends StatefulWidget {
 }
 
 class AskState extends State<Ask> {
+  String _name;
+  String _email;
+  void getNameAndEmail() async {
+    _email = await getFromSP(EMAIL_KEY_SP);
+    _name = await getFromSP(USER_NAME_SP);
+    setState(() {
+
+    });
+  }
+
+
+  @override
+  void initState() {
+    getNameAndEmail();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +38,7 @@ class AskState extends State<Ask> {
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),
-        drawer : NavDrawer(userName:'Sai',email:'sai10022000@gmail.com'),
+        drawer : NavDrawer(userName:_name,email:_email),
         body: new Center(
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.center,

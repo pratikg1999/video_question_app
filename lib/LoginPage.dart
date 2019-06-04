@@ -9,7 +9,9 @@ import 'constants.dart';
 
 Future<int> logOut() async {
   String tokenId = await getCurrentTokenId();
+  print("token is $tokenId");
   String email = await getFromSP(EMAIL_KEY_SP);
+  print("email is $email");
   var logoutUri = Uri.http("${serverIP}:${serverPort}", "/logout");
   http.MultipartRequest request = http.MultipartRequest("POST", logoutUri);
   request.fields["tokenId"] = tokenId;
@@ -20,8 +22,7 @@ Future<int> logOut() async {
     removeKeyFromSP(EMAIL_KEY_SP);
     removeKeyFromSP(TOKEN_KEY_SP);
     print("keys removed");
-  }
-  else{
+  } else {
     print("in logOut: unsucessfull logout");
   }
   return response.statusCode;
@@ -37,22 +38,36 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  @override
-  void initState() async {
-    if(await isKeyPresentInSP(TOKEN_KEY_SP) && await isKeyPresentInSP(EMAIL_KEY_SP)){
+  bool isPasswordValid = true;
+  static String _email ="", _password="";
+  final _emailController = TextEditingController(text: _email);
+  final _passwordController = TextEditingController(text: _password);
+
+  void checkSignInStatus() async {
+    print(await isKeyPresentInSP(TOKEN_KEY_SP));
+    print(await isKeyPresentInSP(EMAIL_KEY_SP));
+    if (await isKeyPresentInSP(TOKEN_KEY_SP) &&
+        await isKeyPresentInSP(EMAIL_KEY_SP)) {
       print("already signed in");
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
     }
+  }
+
+  @override
+  void initState() {
+    isPasswordValid = true;
+    checkSignInStatus();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final formkey = GlobalKey<FormState>();
-    String _email, _password;
 
-    _submit() async{
+//    final _passwordController = TextEditingController();
+
+    _submit() async {
       if (formkey.currentState.validate()) {
         formkey.currentState.save();
 
@@ -66,15 +81,37 @@ class _LoginPageState extends State<LoginPage> {
         print(_email);
         print(_password);
         var response = await request.send();
-          var t = await response.stream.bytesToString();
-          var token = jsonDecode(t.toString());
-          if (response.statusCode == 200) {
-            print("User Logged In");
-            saveCurrentLogin(token['Token Id']);
-            saveInSP(EMAIL_KEY_SP, _email);
-            Navigator.of(context)
-                .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
+        if (response.statusCode == 200) {
+          var resData = await response.stream.bytesToString();
+          var resDataJson = jsonDecode(resData.toString());
+          print("User Logged In");
+          saveCurrentLogin(resDataJson['Token Id']);
+          saveInSP(EMAIL_KEY_SP, _email);
+          saveInSP(USER_NAME_SP, resDataJson["Name"]);
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
+        } else {
+          var error = await response.stream.bytesToString();
+          print(error);
+          var errorJson = jsonDecode(error.toString());
+          switch (errorJson["message"]) {
+            case ERROR_ALREADY_SIGNED_IN:
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Center(
+                        child: Text("User is already signed in other device"));
+                  });
+              break;
+            case ERROR_INCORRECT_PASSWORD:
+              setState(() {
+                print("incorrect password");
+                isPasswordValid = false;
+              });
+              ;
+              break;
           }
+        }
 
 //        Navigator.of(context).pop();
 //        Navigator.of(context).pop();
@@ -112,16 +149,32 @@ class _LoginPageState extends State<LoginPage> {
               new Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: new TextFormField(
+                  controller: _emailController,
+                  autofocus: true,
                   onSaved: (val) => _email = val,
-                  validator: (val) {},
+                  validator: (val) {
+                    if (val.isEmpty) {
+                      return "Email is necessary";
+                    }
+                  },
                   decoration: new InputDecoration(labelText: "Email"),
                 ),
               ),
               new Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: new TextFormField(
+                  controller: _passwordController,
                   onSaved: (val) => _password = val,
-                  decoration: new InputDecoration(labelText: "Password"),
+                  validator: (val) {
+                    if(val.isEmpty){
+                      return "Please enter password";
+                    }
+                  },
+                  obscureText: true,
+//                  controller: _passwordController,
+                  decoration: new InputDecoration(
+                      labelText: "Password",
+                      errorText: isPasswordValid ? null : "Incorrect password"),
                 ),
               ),
               loginBtn,
@@ -146,12 +199,14 @@ class _LoginPageState extends State<LoginPage> {
           child: new ClipRect(
             child: new BackdropFilter(
               filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-              child: new Container(
-                child: loginForm,
-                height: 300.0,
-                width: 300.0,
-                decoration: new BoxDecoration(
-                    color: Colors.grey.shade200.withOpacity(0.5)),
+              child: SingleChildScrollView(
+                child: new Container(
+                  child: loginForm,
+                  height: 300.0,
+                  width: 300.0,
+                  decoration: new BoxDecoration(
+                      color: Colors.grey.shade200.withOpacity(0.5)),
+                ),
               ),
             ),
           ),
