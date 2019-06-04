@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_permissions/simple_permissions.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:teacher/uploadVideo.dart';
 import 'package:video_player/video_player.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -316,6 +317,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
 
     try {
       await controller.stopVideoRecording();
+      uploadFile(videoPath);
     } on CameraException catch (e) {
       _showCameraException(e);
       return null;
