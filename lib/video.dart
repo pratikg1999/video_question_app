@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:simple_permissions/simple_permissions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:teacher/uploadVideo.dart';
-import 'package:video_player/video_player.dart';
+//import 'package:video_player/video_player.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class VideoRecorderExample extends StatefulWidget {
@@ -293,8 +293,8 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
       return null;
     }
 
-    final Directory appDirectory = await getApplicationDocumentsDirectory();
-    final String videoDirectory = '${appDirectory.path}/Videos';
+    final Directory appDirectory = await getExternalStorageDirectory();
+    final String videoDirectory = '${appDirectory.path}/Drupal_Videos';
     await Directory(videoDirectory).create(recursive: true);
     final String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
     final String filePath = '$videoDirectory/${currentTime}.mp4';
