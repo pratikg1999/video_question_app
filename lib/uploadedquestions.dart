@@ -9,14 +9,14 @@ import 'dart:core';
 import 'package:path_provider/path_provider.dart';
 import 'chewieListItem.dart';
 import 'package:video_player/video_player.dart';
-class Questions extends StatefulWidget{
+class UploadedQuestions extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
-    return QuestionsState();
+    return UploadedQuestionsState();
   }
 }
 
-class QuestionsState extends State<StatefulWidget>{
+class UploadedQuestionsState extends State<StatefulWidget>{
 
   Directory appDirectory,videoDirectory;
   String videoDirectoryPath;
@@ -25,21 +25,21 @@ class QuestionsState extends State<StatefulWidget>{
 
   void setter () async {
 
-       appDirectory = await getExternalStorageDirectory();
-       videoDirectoryPath = '${appDirectory.path}/Drupal_Videos';
-       await Directory(videoDirectoryPath).create(recursive: true);
-       videoDirectory = Directory.fromUri(Uri.file(videoDirectoryPath));
-       List<String> l = List<String>();
-       List contents = videoDirectory.listSync();
-       for(var file in contents){
-         String temp = file.toString().substring(file.toString().lastIndexOf('/'),file.toString().length-1);
-         if(temp.endsWith("NotUploaded.mp4"))
-              l.add(temp);
-       }
+    appDirectory = await getExternalStorageDirectory();
+    videoDirectoryPath = '${appDirectory.path}/Drupal_Videos';
+    await Directory(videoDirectoryPath).create(recursive: true);
+    videoDirectory = Directory.fromUri(Uri.file(videoDirectoryPath));
+    List<String> l = List<String>();
+    List contents = videoDirectory.listSync();
+    for(var file in contents){
+      String temp = file.toString().substring(file.toString().lastIndexOf('/'),file.toString().length-1);
+      if(!temp.endsWith("NotUploaded.mp4"))
+        l.add(temp);
+    }
 
-       setState(() {
-         list = l;
-       });
+    setState(() {
+      list = l;
+    });
 
   }
   String data = "fetching";

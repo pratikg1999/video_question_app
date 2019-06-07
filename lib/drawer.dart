@@ -38,16 +38,22 @@ class DrawerState extends State<NavDrawer> {
           new UserAccountsDrawerHeader(
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
-              child: Text(widget.userName.substring(0, 0)),
+//              child: Text(widget.userName.substring(0, 0)),
             ),
-            accountEmail: Text(widget.email),
-            accountName: Text(widget.userName),
+//            accountEmail: Text(widget.email),
+//            accountName: Text(widget.userName),
           ),
           ListTile(
-            title: Text("My questions"),
+            title: Text("Not Uploaded questions"),
             leading: Icon(Icons.card_membership),
             trailing: Icon(Icons.arrow_forward),
             onTap: () => Navigator.of(context).pushNamed('/questions'),
+          ),
+          ListTile(
+            title: Text("Uploaded questions"),
+            leading: Icon(Icons.card_membership),
+            trailing: Icon(Icons.arrow_forward),
+            onTap: () => Navigator.of(context).pushNamed('/uploadedvideo'),
           ),
           ListTile(
             title: Text("My answers"),

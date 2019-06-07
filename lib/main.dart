@@ -5,7 +5,7 @@ import 'package:teacher/answers.dart';
 import 'package:teacher/questions.dart';
 
 import 'ask.dart';
-
+import 'uploadedquestions.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,11 +19,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: <String,WidgetBuilder>{
-        '/SignUp' : (context) => new SignUp(),
-        '/answers' : (context) => new Answers(),
-        '/questions' : (context) => new Questions(),
+        '/SignUp' : (context) => SignUp(),
+        '/answers' : (context) => Answers(),
+        '/questions' : (context) =>Questions(),
         '/login': (context) => LoginPage(),
         '/ask': (context) => Ask(),
+        '/uploadedvideo' : (context) => UploadedQuestions()
       },
       home: LoginPage(title: 'Video Question App'),
 

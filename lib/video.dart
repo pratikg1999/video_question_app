@@ -19,9 +19,11 @@ class VideoRecorderExample extends StatefulWidget {
 class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   CameraController controller;
   String videoPath;
-
   List<CameraDescription> cameras;
   int selectedCameraIdx;
+  bool toUpload = true;
+  String currentTime;
+  String videoDirectory;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -260,18 +262,66 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     });
   }
 
-  void _onStopButtonPressed() {
-    _stopVideoRecording().then((_) {
-      if (mounted) setState(() {});
-      Fluttertoast.showToast(
-          msg: 'Video recorded to $videoPath',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIos: 1,
-          backgroundColor: Colors.grey,
-          textColor: Colors.white
-      );
-    });
+  Future<void> _showDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("Alert Dialog title"),
+          content: new Text("Alert Dialog body"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Upload Now"),
+              onPressed: () {
+                setState(() {
+                  toUpload=true;
+                });
+                _stopVideoRecording().then((_) {
+                  if (mounted) setState(() {});
+                });
+                Navigator.of(context).pop();
+                return;
+              },
+            ),
+            new FlatButton(
+              child: new Text("Upload Later"),
+              onPressed: () {
+                setState(() {
+                  toUpload=false;
+                });
+                _stopVideoRecording().then((_) {
+                  if (mounted) setState(() {});
+                });
+                Navigator.of(context).pop();
+                return;
+              },
+            ),
+            new FlatButton(
+              child: new Text("Discard"),
+              onPressed: () {
+                File file = new File(videoPath);
+                file.delete();
+
+                Fluttertoast.showToast(
+                    msg: 'Successfully deleted video',
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIos: 1,
+
+                    textColor: Colors.black
+                );
+                Navigator.of(context).pop();
+                return;
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _onStopButtonPressed() async {
+    await _showDialog();
   }
 
   Future<String> _startVideoRecording() async {
@@ -294,10 +344,14 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     }
 
     final Directory appDirectory = await getExternalStorageDirectory();
-    final String videoDirectory = '${appDirectory.path}/Drupal_Videos';
+    setState(() {
+      videoDirectory = '${appDirectory.path}/Drupal_Videos';
+    });
     await Directory(videoDirectory).create(recursive: true);
-    final String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
-    final String filePath = '$videoDirectory/${currentTime}.mp4';
+    setState(() {
+      currentTime = DateTime.now().millisecondsSinceEpoch.toString();
+    });
+    final String filePath = '$videoDirectory/$currentTime.mp4';
 
     try {
       await controller.startVideoRecording(filePath);
@@ -317,7 +371,15 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
 
     try {
       await controller.stopVideoRecording();
-      uploadFile(videoPath);
+      if(toUpload)
+        uploadFile(videoPath);
+      else{
+        print(videoPath);
+        print(currentTime);
+        String newPath = videoDirectory + "/" + currentTime + "NotUploaded.mp4";
+        print(newPath);
+        File(videoPath).renameSync(newPath);
+      }
     } on CameraException catch (e) {
       _showCameraException(e);
       return null;
