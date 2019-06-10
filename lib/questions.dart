@@ -1,27 +1,26 @@
-import 'package:path/path.dart';
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:teacher/shared_preferences_helpers.dart';
-import 'constants.dart';
-import "dart:convert";
 import 'dart:io';
 import 'dart:core';
 import 'package:path_provider/path_provider.dart';
 import 'chewieListItem.dart';
 import 'package:video_player/video_player.dart';
+import 'uploadVideo.dart';
+
+
+
 class Questions extends StatefulWidget{
   @override
-  State<StatefulWidget> createState() {
+  QuestionsState createState() {
     return QuestionsState();
   }
 }
 
-class QuestionsState extends State<StatefulWidget>{
+class QuestionsState extends State<Questions>{
 
   Directory appDirectory,videoDirectory;
   String videoDirectoryPath;
   List<String> list;
-  File myfile;
 
   void setter () async {
 
@@ -42,36 +41,52 @@ class QuestionsState extends State<StatefulWidget>{
        });
 
   }
+
+  @override
+  void initState(){
+    super.initState();
+    setter();
+  }
+
   String data = "fetching";
 
 
-  List<Widget> getVideos(){
+//  List<Widget> getVideos(){
+//
+//    List<Widget> listArray = List<Widget>();
+//    if(list!=null) {
+//      for (var i = 0; i < list.length; i++) {
+//        String path = videoDirectoryPath + list[i];
+//        myfile = new File(path);
+//        listArray.add(Column(
+//          children: <Widget>[
+//            ChewieListItem(
+//            videoPlayerController: VideoPlayerController.file(myfile),),
+//          ],
+//        ));
+//      }
+//    }
+//    return listArray;
+//  }
 
-    List<Widget> listArray = List<Widget>();
-    if(list.isNotEmpty) {
-      for (var i = 0; i < list.length; i++) {
-        String path = videoDirectoryPath + list[i];
-        myfile = new File(path);
-        listArray.add(new ChewieListItem(
-            videoPlayerController: VideoPlayerController.file(myfile)));
-      }
-    }
-    return listArray;
+  void uploadVideoNow(String s){
+
   }
 
   @override
   Widget build(BuildContext context){
-
-    setter();
     return new Scaffold(
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),
-        body: Container(
-          child: ListView(
-            children: getVideos(),
-          ),
+        body: ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (context,index){
+             return  ChewieListItem(
+              file: new File(videoDirectoryPath + list[index]));
+            }
         )
+
     );
   }
 }

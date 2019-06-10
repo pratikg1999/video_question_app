@@ -10,7 +10,7 @@ uploadFile(String filePath) async {
 
   var token = await getCurrentTokenId();
 
-  final String videoDirectory = '${filePath}';
+  final String videoDirectory = '$filePath';
 
   var request = new http.MultipartRequest("POST", uri);
   print("successfuly parse the url $url");

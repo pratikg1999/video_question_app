@@ -48,16 +48,19 @@ class UploadedQuestionsState extends State<StatefulWidget>{
   List<Widget> getVideos(){
 
     List<Widget> listArray = List<Widget>();
-    if(list.isNotEmpty) {
+    if(list!=null) {
       for (var i = 0; i < list.length; i++) {
         String path = videoDirectoryPath + list[i];
         myfile = new File(path);
         listArray.add(new ChewieListItem(
-            videoPlayerController: VideoPlayerController.file(myfile)));
+            file: myfile));
       }
     }
-    return listArray;
-  }
+    else {
+      listArray.add(Text("No Videos"));
+    }
+      return listArray;
+    }
 
   @override
   Widget build(BuildContext context){
