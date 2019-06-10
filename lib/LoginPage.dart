@@ -6,13 +6,14 @@ import 'package:teacher/shared_preferences_helpers.dart';
 import 'package:teacher/ask.dart';
 import 'package:http/http.dart' as http;
 import 'constants.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 Future<int> logOut() async {
   String tokenId = await getCurrentTokenId();
   print("token is $tokenId");
   String email = await getFromSP(EMAIL_KEY_SP);
   print("email is $email");
-  var logoutUri = Uri.http("${serverIP}:${serverPort}", "/logout");
+  var logoutUri = Uri.http("${serverIP}:${serverPort}", "/logOut");
   http.MultipartRequest request = http.MultipartRequest("POST", logoutUri);
   request.fields["tokenId"] = tokenId;
   request.fields["email"] = email;
@@ -38,14 +39,53 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final GlobalKey<ScaffoldState>  _loginScaffoldKey = new GlobalKey();
   bool isPasswordValid = true;
-  static String _email ="", _password="";
+  bool isEmailValid = true;
+  static String _email = "", _password = "";
   final _emailController = TextEditingController(text: _email);
   final _passwordController = TextEditingController(text: _password);
+
+
+  Widget snackbarEmailVerification(String errText){
+    return SnackBar(
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        verticalDirection: VerticalDirection.down,
+        children: <Widget>[
+          Text(errText),
+          RaisedButton(
+              child: Text("Resend verification code"),
+              color: Colors.blue,
+              onPressed: () async {
+                var uri = new Uri.http("${serverIP}:${serverPort}", "/sendVerificationMail");
+                var request = new http.MultipartRequest("POST", uri);
+                request.fields['email'] = _email;
+                var response = await request.send();
+                if(response.statusCode == 200){
+                  Fluttertoast.showToast(
+                    msg: 'Email successfully sent',
+                    toastLength: Toast.LENGTH_SHORT,
+                  );
+                }else{
+                  Fluttertoast.showToast(
+                    msg: 'Error sending mail',
+                    toastLength: Toast.LENGTH_SHORT,
+                  );
+                }
+              }
+          )
+        ],
+      ),
+    );
+  }
+
 
   void checkSignInStatus() async {
     print(await isKeyPresentInSP(TOKEN_KEY_SP));
     print(await isKeyPresentInSP(EMAIL_KEY_SP));
+    print(await getFromSP(TOKEN_KEY_SP));
     if (await isKeyPresentInSP(TOKEN_KEY_SP) &&
         await isKeyPresentInSP(EMAIL_KEY_SP)) {
       print("already signed in");
@@ -56,6 +96,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
+    isEmailValid = true;
     isPasswordValid = true;
     checkSignInStatus();
     super.initState();
@@ -103,12 +144,21 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text("User is already signed in other device"));
                   });
               break;
+            case ERROR_EMAIL_NOT_PRESENT:
+              setState(() {
+                print("Email is not registered");
+                isEmailValid = false;
+              });
+              break;
             case ERROR_INCORRECT_PASSWORD:
               setState(() {
                 print("incorrect password");
                 isPasswordValid = false;
               });
-              ;
+
+              break;
+            case ERROR_EMAIL_NOT_VERIFIED:
+              _loginScaffoldKey.currentState.showSnackBar(snackbarEmailVerification("Email not verified"));
               break;
           }
         }
@@ -127,6 +177,7 @@ class _LoginPageState extends State<LoginPage> {
 
     var loginBtn = new RaisedButton(
       onPressed: () {
+        FocusScope.of(context).requestFocus(new FocusNode()); //to hide the on screen keyboard
         _submit();
       },
       child: new Text("LOGIN"),
@@ -150,14 +201,16 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: new TextFormField(
                   controller: _emailController,
-                  autofocus: true,
                   onSaved: (val) => _email = val,
                   validator: (val) {
                     if (val.isEmpty) {
                       return "Email is necessary";
                     }
                   },
-                  decoration: new InputDecoration(labelText: "Email"),
+                  decoration: new InputDecoration(
+                    labelText: "Email",
+                    errorText: isEmailValid ? null : "Email not registered",
+                  ),
                 ),
               ),
               new Padding(
@@ -166,7 +219,7 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _passwordController,
                   onSaved: (val) => _password = val,
                   validator: (val) {
-                    if(val.isEmpty){
+                    if (val.isEmpty) {
                       return "Please enter password";
                     }
                   },
@@ -186,6 +239,8 @@ class _LoginPageState extends State<LoginPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
     );
     return new Scaffold(
+      key: _loginScaffoldKey,
+
       appBar: new AppBar(
         title: new Text("Video Question App"),
       ),
