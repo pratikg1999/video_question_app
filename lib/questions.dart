@@ -22,7 +22,7 @@ class QuestionsState extends State<Questions>{
   String videoDirectoryPath;
   List<String> list;
 
-  void setter () async {
+  Future<List<String>> setter () async {
 
        appDirectory = await getExternalStorageDirectory();
        videoDirectoryPath = '${appDirectory.path}/Drupal_Videos';
@@ -36,41 +36,40 @@ class QuestionsState extends State<Questions>{
               l.add(temp);
        }
 
-       setState(() {
-         list = l;
-       });
 
+      return l;
   }
 
   @override
   void initState(){
     super.initState();
-    setter();
+    setter().then((x){
+      setState(() {
+        list = x;
+      });
+    });
   }
 
   String data = "fetching";
 
+  void uploadVideoNow(String s)async {
+    String temp = videoDirectoryPath + s.substring(0,14) + ".mp4";
+    File(videoDirectoryPath + s).renameSync(temp);
+    for( var l in list)
+      print(l);
 
-//  List<Widget> getVideos(){
-//
-//    List<Widget> listArray = List<Widget>();
-//    if(list!=null) {
-//      for (var i = 0; i < list.length; i++) {
-//        String path = videoDirectoryPath + list[i];
-//        myfile = new File(path);
-//        listArray.add(Column(
-//          children: <Widget>[
-//            ChewieListItem(
-//            videoPlayerController: VideoPlayerController.file(myfile),),
-//          ],
-//        ));
-//      }
-//    }
-//    return listArray;
-//  }
+    uploadFile(temp);
 
-  void uploadVideoNow(String s){
+    //print(index);
+   setter().then((x){
+     setState(() {
+       list = x;
+     });
+   });
 
+
+//    for( var l in list)
+//      print(l);
   }
 
   @override
@@ -82,9 +81,46 @@ class QuestionsState extends State<Questions>{
         body: ListView.builder(
             itemCount: list.length,
             itemBuilder: (context,index){
-             return  ChewieListItem(
-              file: new File(videoDirectoryPath + list[index]));
+//              print("HHHHHHHHHHHHHHH");
+//              print(list.toString());
+//              print(index);
+              print(videoDirectoryPath + list[index]);
+
+             return Column(
+               children: <Widget>[
+
+             new ChewieListItem(
+             file: new File(videoDirectoryPath + list[index]),
+               key: UniqueKey(),
+             ),
+             Row(
+                 children: <Widget>[
+                   Padding(
+                 padding:EdgeInsets.all(10.0),
+                     child:RaisedButton(
+              child: Text('Upload'),
+              onPressed: (){
+              uploadVideoNow(list[index]);
+              },
+              ),
+                 ),
+                   Padding(
+                     padding: EdgeInsets.all(10.0),
+                     child: RaisedButton(
+                       child: Text('Delete'),
+                       onPressed: (){
+                         File file = new File(list[index]);
+                         file.delete();
+                       },
+                     )
+                   ),
+                 ],
+               ),
+
+               ],
+             );
             }
+
         )
 
     );

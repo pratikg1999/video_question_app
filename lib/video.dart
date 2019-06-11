@@ -266,8 +266,8 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text(""),
-          content: new Text("Select an option"),
+          title: new Text("Select an option"),
+          content: new Text("What do you want to do?"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Upload Now"),

@@ -10,10 +10,13 @@ class ChewieListItem extends StatefulWidget{
   ChewieListItem({
     @required this.file,
     Key key
-  }) : super(key : key);
+  }) : super(key : key){
+    print("chewie $file");
+  }
 
   @override
   ChewieListItemState createState() {
+//    print("chewie $file");
     return ChewieListItemState();
   }
 }
@@ -27,8 +30,9 @@ class ChewieListItemState extends State<ChewieListItem>{
   void initState() {
     super.initState();
     videoPlayerController =new VideoPlayerController.file(widget.file);
+    print(videoPlayerController.dataSource);
     _chewieController = ChewieController(
-      aspectRatio: 16 / 9,
+      aspectRatio: 16/9 ,
       videoPlayerController: videoPlayerController,
       autoInitialize: true,
     );
@@ -49,9 +53,15 @@ class ChewieListItemState extends State<ChewieListItem>{
   }
 
   @override
-  void dispose() {
-    _chewieController.dispose();
+  void deactivate() {
     videoPlayerController.dispose();
+    _chewieController.dispose();
+    super.deactivate();
+  }
+  @override
+  void dispose() {
+    videoPlayerController.dispose();
+    _chewieController.dispose();
     super.dispose();
   }
 
