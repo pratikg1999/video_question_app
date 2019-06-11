@@ -6,7 +6,7 @@ import 'package:teacher/questions.dart';
 
 import 'ask.dart';
 import 'uploadedquestions.dart';
-
+import 'checkBoxList.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -24,7 +24,8 @@ class MyApp extends StatelessWidget {
         '/questions' : (context) =>Questions(),
         '/login': (context) => LoginPage(),
         '/ask': (context) => Ask(),
-        '/uploadedvideo' : (context) => UploadedQuestions()
+        '/uploadedvideo' : (context) => UploadedQuestions(),
+        '/checkBox' : (context) => CheckBox(),
       },
       home: LoginPage(title: 'Video Question App'),
 

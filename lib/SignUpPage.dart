@@ -120,9 +120,9 @@ class SignUpState extends State<SignUp> {
           context: context,
           builder: (BuildContext context) {
             return Center(
-              child: Container(
-                decoration: BoxDecoration(color: Color.fromRGBO(30, 30, 30, 1)),
-                child: Row(
+              child: AlertDialog(
+                //decoration: BoxDecoration(color: Color.fromRGBO(30, 30, 30, 1)),
+                content: Row(
                   children: <Widget>[
                     CircularProgressIndicator(),
                     Expanded(
@@ -187,8 +187,9 @@ class SignUpState extends State<SignUp> {
             showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return Center(
-                      child: Text("User with this email already exists"));
+                  return AlertDialog(
+                    title: Text("Signup failed"),
+                      content: Text("User with this email already exists"));
                 });
             break;
           default:

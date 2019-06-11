@@ -1,32 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+import 'dart:io';
 
 class ChewieListItem extends StatefulWidget{
 
-  final VideoPlayerController videoPlayerController;
+   File file;
 
   ChewieListItem({
-    @required this.videoPlayerController,
+    @required this.file,
     Key key
-  }) : super(key : key);
+  }) : super(key : key){
+    print("chewie $file");
+  }
 
   @override
   ChewieListItemState createState() {
+//    print("chewie $file");
     return ChewieListItemState();
   }
 }
 
 class ChewieListItemState extends State<ChewieListItem>{
 
+  VideoPlayerController videoPlayerController;
   ChewieController _chewieController;
 
   @override
   void initState() {
     super.initState();
+    videoPlayerController =new VideoPlayerController.file(widget.file);
+    print(videoPlayerController.dataSource);
     _chewieController = ChewieController(
-      aspectRatio: 16 / 9,
-      videoPlayerController: widget.videoPlayerController,
+      aspectRatio: 16/9 ,
+      videoPlayerController: videoPlayerController,
       autoInitialize: true,
     );
   }
@@ -35,17 +42,27 @@ class ChewieListItemState extends State<ChewieListItem>{
   Widget build(BuildContext context) {
       return Padding(
           padding: EdgeInsets.all(10.0),
-          child: Chewie(
-            controller: _chewieController,
-          ),
+          child: new AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Chewie(
+              controller: _chewieController,
+            ),
+          )
+
       );
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    widget.videoPlayerController.dispose();
+  void deactivate() {
+    videoPlayerController.dispose();
     _chewieController.dispose();
+    super.deactivate();
+  }
+  @override
+  void dispose() {
+    videoPlayerController.dispose();
+    _chewieController.dispose();
+    super.dispose();
   }
 
 }

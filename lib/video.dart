@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:simple_permissions/simple_permissions.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_permissions/simple_permissions.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:teacher/uploadVideo.dart';
-//import 'package:video_player/video_player.dart';
+import 'package:video_player/video_player.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'uploadVideo.dart';
 
 class VideoRecorderExample extends StatefulWidget {
   @override
@@ -19,12 +18,12 @@ class VideoRecorderExample extends StatefulWidget {
 class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   CameraController controller;
   String videoPath;
+
   List<CameraDescription> cameras;
   int selectedCameraIdx;
   bool toUpload = true;
   String currentTime;
   String videoDirectory;
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   requestWritePermission() async {
@@ -36,12 +35,11 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
       });
     }
   }
+
   @override
   void initState() {
     super.initState();
     requestWritePermission();
-
-
     // Get the listonNewCameraSelected of available cameras.
     // Then set the first camera as selected.
     availableCameras()
@@ -262,13 +260,14 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     });
   }
 
+
   Future<void> _showDialog() async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Alert Dialog title"),
-          content: new Text("Alert Dialog body"),
+          title: new Text("Select an option"),
+          content: new Text("What do you want to do?"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Upload Now"),
@@ -298,7 +297,8 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
             ),
             new FlatButton(
               child: new Text("Discard"),
-              onPressed: () {
+              onPressed: () async {
+                await controller.stopVideoRecording();
                 File file = new File(videoPath);
                 file.delete();
 
@@ -346,12 +346,11 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     final Directory appDirectory = await getExternalStorageDirectory();
     setState(() {
       videoDirectory = '${appDirectory.path}/Drupal_Videos';
-    });
-    await Directory(videoDirectory).create(recursive: true);
-    setState(() {
       currentTime = DateTime.now().millisecondsSinceEpoch.toString();
     });
-    final String filePath = '$videoDirectory/$currentTime.mp4';
+    await Directory(videoDirectory).create(recursive: true);
+
+    final String filePath = '$videoDirectory/${currentTime}.mp4';
 
     try {
       await controller.startVideoRecording(filePath);
@@ -374,8 +373,6 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
       if(toUpload)
         uploadFile(videoPath);
       else{
-        print(videoPath);
-        print(currentTime);
         String newPath = videoDirectory + "/" + currentTime + "NotUploaded.mp4";
         print(newPath);
         File(videoPath).renameSync(newPath);
@@ -384,6 +381,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
       _showCameraException(e);
       return null;
     }
+
   }
 
   void _showCameraException(CameraException e) {
@@ -410,6 +408,6 @@ class VideoRecorderApp extends StatelessWidget {
   }
 }
 
-Future<void> main() async {
-  runApp(VideoRecorderApp());
-}
+//Future<void> main() async {
+//  runApp(VideoRecorderApp());
+//}
