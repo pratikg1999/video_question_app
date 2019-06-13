@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'constants.dart';
 import 'package:location/location.dart';
 import 'constants.dart';
+import 'checkBoxList.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -143,60 +144,26 @@ class SignUpState extends State<SignUp> {
           });
       formkey.currentState.save();
 
-      var uri = new Uri.http("${serverIP}:${serverPort}", "/signup");
 
-      var request = new http.MultipartRequest("POST", uri);
-
-      Map<String, double> currentLocation = new Map();
-      Location location = new Location();
-      currentLocation = await location.getLocation();
-
-      request.fields['name'] = _name;
-      request.fields['phone'] = _phone;
-      request.fields['age'] = _age.toString();
-      request.fields['email'] = _email;
-      request.fields['password'] = _password;
-      request.fields['latitude'] = currentLocation["latitude"].toString();
-      request.fields['longitude'] = currentLocation["longitude"].toString();
-
-      print(request.fields.toString());
-
-      var response = await request.send();
 //      var resData = await response.stream.bytesToString();
 //      var resDataJson = jsonDecode(resData);
 
-      if (response.statusCode == 200) {
-        print("Registered");
+
 //        saveCurrentLogin(resDataJson["Token Id"]);
 //        saveInSP(EMAIL_KEY_SP, _email);
 //        saveInSP(USER_NAME_SP, resDataJson["Name"]);
-        Navigator.pop(context);
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
-        Fluttertoast.showToast(
-          msg: 'Verification link has been sent',
-          toastLength: Toast.LENGTH_SHORT,
-        );
-      } else {
-        Navigator.pop(context);
-        var error = await response.stream.bytesToString();
-        print(error);
-        var errorJson = jsonDecode(error.toString());
-        switch (errorJson["message"]) {
-          case ERROR_USER_ALREADY_EXISTS:
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("Signup failed"),
-                      content: Text("User with this email already exists"));
-                });
-            break;
-          default:
-            _signupScaffoldKey.currentState.showSnackBar(
-                SnackBar(content: Text("Some error occured..try again")));
-        }
-      }
+        Navigator.push(context, MaterialPageRoute(builder: (context){
+            return CheckBox(
+                name: _name,
+                phone: _phone,
+                age:_age,
+                email:_email,
+                password:_password
+
+            );
+        }));
+
+
     } else {
       _signupScaffoldKey.currentState.showSnackBar(
           new SnackBar(content: Text("Unable to create user..try again")));

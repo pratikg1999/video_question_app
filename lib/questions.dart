@@ -68,9 +68,58 @@ class QuestionsState extends State<Questions>{
    });
 
 
-//    for( var l in list)
-//      print(l);
   }
+
+  List<Widget> getVideos(){
+
+    List<Widget> listArray = List<Widget>();
+    if(list!=null) {
+      for (var index = 0; index < list.length; index++) {
+        listArray.add(new Column(
+          children: <Widget>[
+
+            new ChewieListItem(
+              file: new File(videoDirectoryPath + list[index]),
+              key: UniqueKey(),
+            ),
+            Row(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: RaisedButton(
+                    child: Text('Upload'),
+                    onPressed: () {
+                      uploadVideoNow(list[index]);
+                    },
+                  ),
+                ),
+                Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: RaisedButton(
+                      child: Text('Delete'),
+                      onPressed: () {
+                        File file = new File(
+                            videoDirectoryPath + list[index]);
+                        file.delete();
+                        setState(() {
+                          list.removeAt(index);
+                        });
+                      },
+                    )
+                ),
+              ],
+            ),
+
+          ],
+        ));
+      }
+    }
+    else {
+      listArray.add(Text("No Videos"));
+    }
+    return listArray;
+  }
+
 
   @override
   Widget build(BuildContext context){
@@ -78,48 +127,10 @@ class QuestionsState extends State<Questions>{
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),
-        body: ListView.builder(
-            itemCount: list.length,
-            itemBuilder: (context,index){
-//              print("HHHHHHHHHHHHHHH");
-//              print(list.toString());
-//              print(index);
-              print(videoDirectoryPath + list[index]);
-
-             return Column(
-               children: <Widget>[
-
-             new ChewieListItem(
-             file: new File(videoDirectoryPath + list[index]),
-               key: UniqueKey(),
-             ),
-             Row(
-                 children: <Widget>[
-                   Padding(
-                 padding:EdgeInsets.all(10.0),
-                     child:RaisedButton(
-              child: Text('Upload'),
-              onPressed: (){
-              uploadVideoNow(list[index]);
-              },
-              ),
-                 ),
-                   Padding(
-                     padding: EdgeInsets.all(10.0),
-                     child: RaisedButton(
-                       child: Text('Delete'),
-                       onPressed: (){
-                         File file = new File(list[index]);
-                         file.delete();
-                       },
-                     )
-                   ),
-                 ],
-               ),
-
-               ],
-             );
-            }
+        body: Container(
+          child: ListView(
+            children: getVideos(),
+          ),
 
         )
 

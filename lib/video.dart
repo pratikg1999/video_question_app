@@ -265,57 +265,61 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text("Select an option"),
-          content: new Text("What do you want to do?"),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("Upload Now"),
-              onPressed: () {
-                setState(() {
-                  toUpload=true;
-                });
-                _stopVideoRecording().then((_) {
-                  if (mounted) setState(() {});
-                });
-                Navigator.of(context).pop();
-                return;
-              },
-            ),
-            new FlatButton(
-              child: new Text("Upload Later"),
-              onPressed: () {
-                setState(() {
-                  toUpload=false;
-                });
-                _stopVideoRecording().then((_) {
-                  if (mounted) setState(() {});
-                });
-                Navigator.of(context).pop();
-                return;
-              },
-            ),
-            new FlatButton(
-              child: new Text("Discard"),
-              onPressed: () async {
-                await controller.stopVideoRecording();
-                File file = new File(videoPath);
-                file.delete();
+        return
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: AlertDialog(
+              title: new Text("Select an option"),
+              content: new Text("What do you want to do?"),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("Upload Now"),
+                  onPressed: () {
+                    setState(() {
+                      toUpload=true;
+                    });
+                    _stopVideoRecording().then((_) {
+                      if (mounted) setState(() {});
+                    });
+                    Navigator.of(context).pop();
+                    return;
+                  },
+                ),
+                new FlatButton(
+                  child: new Text("Upload Later"),
+                  onPressed: () {
+                    setState(() {
+                      toUpload=false;
+                    });
+                    _stopVideoRecording().then((_) {
+                      if (mounted) setState(() {});
+                    });
+                    Navigator.of(context).pop();
+                    return;
+                  },
+                ),
+                new FlatButton(
+                  child: new Text("Discard"),
+                  onPressed: () async {
+                    await controller.stopVideoRecording();
+                    File file = new File(videoPath);
+                    file.delete();
 
-                Fluttertoast.showToast(
-                    msg: 'Successfully deleted video',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIos: 1,
+                    Fluttertoast.showToast(
+                        msg: 'Successfully deleted video',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIos: 1,
 
-                    textColor: Colors.black
-                );
-                Navigator.of(context).pop();
-                return;
-              },
+                        textColor: Colors.black
+                    );
+                    Navigator.of(context).pop();
+                    return;
+                  },
+                ),
+              ],
             ),
-          ],
-        );
+          );
       },
     );
   }
