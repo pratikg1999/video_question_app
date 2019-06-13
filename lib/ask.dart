@@ -3,6 +3,7 @@ import 'package:teacher/video.dart';
 import 'package:teacher/drawer.dart';
 import 'package:http/http.dart' as http;
 import 'package:teacher/shared_preferences_helpers.dart';
+import 'constants.dart';
 
 
 
@@ -18,8 +19,8 @@ class AskState extends State<Ask> {
   String _name;
   String _email;
   void getNameAndEmail() async {
-    _email = await getFromSP(EMAIL_KEY_SP);
-    _name = await getFromSP(USER_NAME_SP);
+    _email = EMAIL;
+    _name = USER_NAME;
     setState(() {
 
     });

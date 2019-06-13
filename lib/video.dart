@@ -263,6 +263,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
 
   Future<void> _showDialog() async {
     await showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -302,14 +303,14 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
                 File file = new File(videoPath);
                 file.delete();
 
-                Fluttertoast.showToast(
-                    msg: 'Successfully deleted video',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIos: 1,
-
-                    textColor: Colors.black
-                );
+//                Fluttertoast.showToast(
+//                    msg: 'Successfully deleted video',
+//                    toastLength: Toast.LENGTH_SHORT,
+//                    gravity: ToastGravity.CENTER,
+//                    timeInSecForIos: 1,
+//
+//                    textColor: Colors.black
+//                );
                 Navigator.of(context).pop();
                 return;
               },

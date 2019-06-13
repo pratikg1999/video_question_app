@@ -88,6 +88,8 @@ class _LoginPageState extends State<LoginPage> {
     print(await getFromSP(TOKEN_KEY_SP));
     if (await isKeyPresentInSP(TOKEN_KEY_SP) &&
         await isKeyPresentInSP(EMAIL_KEY_SP)) {
+      USER_NAME = await getFromSP(USER_NAME_SP);
+      EMAIL = await getFromSP(EMAIL_KEY_SP);
       print("already signed in");
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
@@ -129,6 +131,8 @@ class _LoginPageState extends State<LoginPage> {
           saveCurrentLogin(resDataJson['Token Id']);
           saveInSP(EMAIL_KEY_SP, _email);
           saveInSP(USER_NAME_SP, resDataJson["Name"]);
+          USER_NAME = resDataJson["Name"];
+          EMAIL = _email;
           Navigator.of(context)
               .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
         } else {
@@ -209,6 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   decoration: new InputDecoration(
                     labelText: "Email",
+                    hintText: "you@example.com",
                     errorText: isEmailValid ? null : "Email not registered",
                   ),
                 ),
@@ -227,6 +232,7 @@ class _LoginPageState extends State<LoginPage> {
 //                  controller: _passwordController,
                   decoration: new InputDecoration(
                       labelText: "Password",
+                      hintText: "password",
                       errorText: isPasswordValid ? null : "Incorrect password"),
                 ),
               ),

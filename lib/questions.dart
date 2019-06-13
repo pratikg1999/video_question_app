@@ -5,6 +5,8 @@ import 'dart:core';
 import 'package:path_provider/path_provider.dart';
 import 'chewieListItem.dart';
 import 'package:video_player/video_player.dart';
+import 'constants.dart';
+import 'drawer.dart';
 import 'uploadVideo.dart';
 
 
@@ -20,7 +22,7 @@ class QuestionsState extends State<Questions>{
 
   Directory appDirectory,videoDirectory;
   String videoDirectoryPath;
-  List<String> list;
+  List<String> list = [];
 
   Future<List<String>> setter () async {
 
@@ -75,6 +77,7 @@ class QuestionsState extends State<Questions>{
   @override
   Widget build(BuildContext context){
     return new Scaffold(
+      drawer: NavDrawer(email: EMAIL,userName: USER_NAME,),
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),

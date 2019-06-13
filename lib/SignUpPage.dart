@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'constants.dart';
 import 'package:location/location.dart';
 import 'constants.dart';
+// import 'package:teacher/bloc.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -17,9 +18,11 @@ class SignUp extends StatefulWidget {
 
 class SignUpState extends State<SignUp> {
   final GlobalKey<ScaffoldState> _signupScaffoldKey = new GlobalKey();
-
+  // final bloc = Bloc();
   final formkey = GlobalKey<FormState>();
   String _email, _password, _name;
+  final _passwordConroller = TextEditingController();
+  // final _verifyPasswordController = TextEditingController();
   int _age;
   String _phone;
   bool _emailValid;
@@ -56,7 +59,9 @@ class SignUpState extends State<SignUp> {
                         onSaved: (input) => _name = input,
                       ),
                       TextFormField(
-                        decoration: InputDecoration(labelText: 'Phone:'),
+                        decoration: InputDecoration(
+                            labelText: 'Phone:', hintText: "12xxxx78"),
+                        keyboardType: TextInputType.number,
                         validator: (input) {
                           if (input.length < 10) {
                             return 'Phone number is invalid';
@@ -68,10 +73,13 @@ class SignUpState extends State<SignUp> {
                       ),
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Age:'),
+                        keyboardType: TextInputType.number,
                         onSaved: (input) => _age = int.parse(input),
                       ),
                       TextFormField(
-                        decoration: InputDecoration(labelText: 'E-mail:'),
+                        decoration: InputDecoration(
+                            labelText: 'E-mail:', hintText: "you@example.com"),
+                        keyboardType: TextInputType.emailAddress,
                         //validator: (input) => (!input.contains('@')) ? 'Not a vaild email' : null,
                         validator: (input) {
                           _emailValid =
@@ -86,13 +94,29 @@ class SignUpState extends State<SignUp> {
                         onSaved: (input) => _email = input,
                       ),
                       TextFormField(
-                        decoration: InputDecoration(labelText: 'Password:'),
+                        controller: _passwordConroller,
+                        decoration: InputDecoration(
+                            labelText: 'Password:', hintText: "password"),
                         validator: (input) => input.length < 8
                             ? 'Password must be atleast 8 char long'
                             : null,
                         onSaved: (input) => _password = input,
                         obscureText: true,
                       ),
+                      Builder(builder: (BuildContext context) {
+                        return TextFormField(
+                          // controller: _verifyPasswordController,
+                          decoration:
+                              InputDecoration(
+                                labelText: "Verify Password",
+                                // errorText: _verifyPasswordController.text == _passwordConroller.text ? null: "Passwords don't match",
+                                ),
+                          validator: (input) => input == _passwordConroller.text
+                              ? null
+                              : "Passwords don't match",
+                          obscureText: true,
+                        );
+                      }),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
@@ -117,29 +141,34 @@ class SignUpState extends State<SignUp> {
   void addStudent() async {
     if (formkey.currentState.validate()) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
             return Center(
-              child: AlertDialog(
+                child:
+                    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+              AlertDialog(
                 //decoration: BoxDecoration(color: Color.fromRGBO(30, 30, 30, 1)),
                 content: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     CircularProgressIndicator(),
                     Expanded(
                       child: Center(
                         child: Text(
                           "Creating new user",
-                          style: TextStyle(
-                            height: 1.0,
-                            color: Colors.white.withOpacity(0.8),
-                          ),
+//                          style: TextStyle(
+//                            height: 1.0,
+//                            color: Colors.white.withOpacity(0.8),
+//                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-            );
+            ]));
           });
       formkey.currentState.save();
 
@@ -188,7 +217,7 @@ class SignUpState extends State<SignUp> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text("Signup failed"),
+                      title: Text("Signup failed"),
                       content: Text("User with this email already exists"));
                 });
             break;

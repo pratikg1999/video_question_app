@@ -9,6 +9,8 @@ import 'dart:core';
 import 'package:path_provider/path_provider.dart';
 import 'chewieListItem.dart';
 import 'package:video_player/video_player.dart';
+
+import 'drawer.dart';
 class UploadedQuestions extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {
@@ -67,6 +69,7 @@ class UploadedQuestionsState extends State<StatefulWidget>{
 
     setter();
     return new Scaffold(
+      drawer: NavDrawer(userName: USER_NAME, email: EMAIL,),
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),
