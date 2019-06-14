@@ -26,13 +26,7 @@ class AskState extends State<Ask> {
     });
   }
 
-  void testing() {
-    var url = "${serverIP}:${serverPort}/5d01e64ceff0293f54db1b64";
 
-      VideoPlayerController v = VideoPlayerController.network(url);
-      if(v!=null)print("DONE");
-      else print("HHHHHHHHHHHHHHHH");
-  }
 
   @override
   void initState() {
@@ -59,11 +53,10 @@ class AskState extends State<Ask> {
                     textColor: Colors.white,
                     color: Colors.blue,
                     onPressed: (){
-//                      Navigator.push(
-//                        context,
-//                        MaterialPageRoute(builder: (context) => VideoRecorderExample()),
-//                      );
-                    testing();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => VideoRecorderExample()),
+                      );
                     },
                     child: new Text("Ask Question"),
                   ),

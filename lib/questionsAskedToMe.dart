@@ -18,11 +18,12 @@ class QuestionsAsked extends StatefulWidget{
 
 class QuestionsAskedState extends State<QuestionsAsked>{
 
-  List<String> list;
+  List list;
 
   Future<void> setter () async {
 
-    var token = getCurrentTokenId();
+    var token = await getCurrentTokenId();
+    print(token);
 
     var response = await http.get(
         Uri.encodeFull("http://192.168.43.27:8080/getQuestions?tokenId=${token}"),
@@ -31,8 +32,11 @@ class QuestionsAskedState extends State<QuestionsAsked>{
         }
     );
 
-    list = jsonDecode(response.body);
-
+    final map = jsonDecode(response.body);
+    setState(() {
+      list = map;
+      print(list.toString());
+    });
   }
 
   @override
@@ -51,7 +55,7 @@ class QuestionsAskedState extends State<QuestionsAsked>{
           children: <Widget>[
 
             new ChewieListItemNet(
-              url: "http://192.168.43.27:8080/getVideo/"+list[index],
+              url: "http://192.168.43.27:8080/downloadFile/"+list[index].toString().substring(list[index].toString().lastIndexOf("\\")+1),
               key: UniqueKey(),
             ),
             Row(
