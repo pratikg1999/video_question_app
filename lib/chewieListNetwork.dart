@@ -5,14 +5,12 @@ import 'package:chewie/chewie.dart';
 
 class ChewieListItemNet extends StatefulWidget{
 
-  String url;
+  final String url;
 
   ChewieListItemNet({
     @required this.url,
     Key key
-  }) : super(key : key){
-
-  }
+  }) : super(key : key);
 
   @override
   ChewieListItemNetState createState() {

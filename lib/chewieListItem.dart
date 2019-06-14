@@ -5,7 +5,7 @@ import 'dart:io';
 
 class ChewieListItem extends StatefulWidget{
 
-   File file;
+  final File file; // TODO remove final if error 
 
   ChewieListItem({
     @required this.file,

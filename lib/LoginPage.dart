@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:teacher/SignUpPage.dart';
 import 'package:teacher/shared_preferences_helpers.dart';
-import 'package:teacher/ask.dart';
 import 'package:http/http.dart' as http;
 import 'constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -112,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
       if (formkey.currentState.validate()) {
         formkey.currentState.save();
 
-        var uri = new Uri.http("${serverIP}:${serverPort}", "/login");
+        var uri = new Uri.http("$serverIP:$serverPort", "/login");
 
         var request = new http.MultipartRequest("POST", uri);
 

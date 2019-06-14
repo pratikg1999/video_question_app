@@ -1,8 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-final EMAIL_KEY_SP = "email";
-final TOKEN_KEY_SP = "Token";
-final USER_NAME_SP = "Name";
+const EMAIL_KEY_SP = "email";
+const TOKEN_KEY_SP = "Token";
+const USER_NAME_SP = "Name";
 
 saveCurrentLogin(String  token) async {
 

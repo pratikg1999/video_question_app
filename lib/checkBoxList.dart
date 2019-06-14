@@ -104,7 +104,7 @@ class CheckBoxState extends State<CheckBox> {
     // Navigator.pop(context);
   }
 
-  void send() async {
+  send() async {
     showDialog(
         barrierDismissible: false,
         context: context,
