@@ -39,15 +39,14 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final GlobalKey<ScaffoldState>  _loginScaffoldKey = new GlobalKey();
+  final GlobalKey<ScaffoldState> _loginScaffoldKey = new GlobalKey();
   bool isPasswordValid = true;
   bool isEmailValid = true;
   static String _email = "", _password = "";
   final _emailController = TextEditingController(text: _email);
   final _passwordController = TextEditingController(text: _password);
 
-
-  Widget snackbarEmailVerification(String errText){
+  Widget snackbarEmailVerification(String errText) {
     return SnackBar(
       content: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -59,28 +58,27 @@ class _LoginPageState extends State<LoginPage> {
               child: Text("Resend verification code"),
               color: Colors.blue,
               onPressed: () async {
-                var uri = new Uri.http("${serverIP}:${serverPort}", "/sendVerificationMail");
+                var uri = new Uri.http(
+                    "${serverIP}:${serverPort}", "/sendVerificationMail");
                 var request = new http.MultipartRequest("POST", uri);
                 request.fields['email'] = _email;
                 var response = await request.send();
-                if(response.statusCode == 200){
+                if (response.statusCode == 200) {
                   Fluttertoast.showToast(
                     msg: 'Email successfully sent',
                     toastLength: Toast.LENGTH_SHORT,
                   );
-                }else{
+                } else {
                   Fluttertoast.showToast(
                     msg: 'Error sending mail',
                     toastLength: Toast.LENGTH_SHORT,
                   );
                 }
-              }
-          )
+              })
         ],
       ),
     );
   }
-
 
   void checkSignInStatus() async {
     print(await isKeyPresentInSP(TOKEN_KEY_SP));
@@ -145,7 +143,12 @@ class _LoginPageState extends State<LoginPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return Center(
-                        child: Text("User is already signed in other device"));
+                        child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        AlertDialog(content: Text("User is already signed in other device"),),
+                      ],
+                    ));
                   });
               break;
             case ERROR_EMAIL_NOT_PRESENT:
@@ -162,7 +165,8 @@ class _LoginPageState extends State<LoginPage> {
 
               break;
             case ERROR_EMAIL_NOT_VERIFIED:
-              _loginScaffoldKey.currentState.showSnackBar(snackbarEmailVerification("Email not verified"));
+              _loginScaffoldKey.currentState.showSnackBar(
+                  snackbarEmailVerification("Email not verified"));
               break;
           }
         }
@@ -181,7 +185,8 @@ class _LoginPageState extends State<LoginPage> {
 
     var loginBtn = new RaisedButton(
       onPressed: () {
-        FocusScope.of(context).requestFocus(new FocusNode()); //to hide the on screen keyboard
+        FocusScope.of(context)
+            .requestFocus(new FocusNode()); //to hide the on screen keyboard
         _submit();
       },
       child: new Text("LOGIN"),
@@ -246,7 +251,6 @@ class _LoginPageState extends State<LoginPage> {
     );
     return new Scaffold(
       key: _loginScaffoldKey,
-
       appBar: new AppBar(
         title: new Text("Video Question App"),
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teacher/SignUpPage.dart';
 import 'package:teacher/LoginPage.dart';
 import 'package:teacher/answers.dart';
+import 'package:teacher/profile_page.dart';
 import 'package:teacher/questions.dart';
 
 import 'ask.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         '/ask': (context) => Ask(),
         '/uploadedvideo' : (context) => UploadedQuestions(),
         '/checkBox' : (context) => CheckBox(),
+        '/profile': (context) => ProfilePage(),
       },
       home: LoginPage(title: 'Video Question App'),
 

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:teacher/constants.dart';
 import 'package:http_parser/http_parser.dart';
@@ -21,7 +24,26 @@ uploadFile(String filePath) async {
   request.send().then((response) {
     print(response.statusCode);
     print(response.toString());
-    if (response.statusCode == 200) print("Uploaded!");
+    if (response.statusCode == 200){
+      print("Uploaded!");
+        Fluttertoast.showToast(
+        msg: 'Successfully uploaded',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 1,
+    );
+    }else{
+       Fluttertoast.showToast(
+        msg: 'Video failed to upload..',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 1,
+       );
+      String currentTime=  DateTime.now().millisecondsSinceEpoch.toString();;
+      String newPath = videoDirectory.substring(0, videoDirectory.lastIndexOf("/")) + "/" + currentTime + "NotUploaded.mp4";
+        print(newPath);
+        File(filePath).renameSync(newPath);
+    }
   });
 }
 

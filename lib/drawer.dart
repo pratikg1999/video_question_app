@@ -83,6 +83,15 @@ class DrawerState extends State<NavDrawer> {
                     '/ask', (Route<dynamic> route) => false);
                 Navigator.of(context).pushNamed('/answers');
               }),
+              ListTile(
+              title: Text("My profile"),
+              leading: Icon(Icons.person),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/ask', (Route<dynamic> route) => false);
+                Navigator.of(context).pushNamed('/profile');
+              }),
           ListTile(
             title: Text("Log out"),
             trailing: Icon(Icons.power_settings_new),

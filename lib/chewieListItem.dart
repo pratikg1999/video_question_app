@@ -10,9 +10,7 @@ class ChewieListItem extends StatefulWidget{
   ChewieListItem({
     @required this.file,
     Key key
-  }) : super(key : key){
-    print("chewie $file");
-  }
+  }) : super(key : key);
 
   @override
   ChewieListItemState createState() {
