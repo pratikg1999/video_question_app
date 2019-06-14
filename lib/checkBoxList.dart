@@ -92,7 +92,7 @@ class CheckBoxState extends State<CheckBox> {
   }
 
   void save() async {
-    values.forEach((k, v) => print('${k}: ${v}'));
+    values.forEach((k, v) => print('$k: $v'));
     values.forEach((k, v) {
       if (v == true) {
         list.add(k);
@@ -130,7 +130,7 @@ class CheckBoxState extends State<CheckBox> {
             ),
           ]));
         });
-    var uri = new Uri.http("${serverIP}:${serverPort}", "/signup");
+    var uri = new Uri.http("$serverIP:$serverPort", "/signup");
 
     var request = new http.MultipartRequest("POST", uri);
 
