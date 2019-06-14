@@ -4,7 +4,7 @@ import 'package:teacher/LoginPage.dart';
 import 'package:teacher/answers.dart';
 import 'package:teacher/profile_page.dart';
 import 'package:teacher/questions.dart';
-
+import 'questionsAskedToMe.dart';
 import 'ask.dart';
 import 'uploadedquestions.dart';
 import 'checkBoxList.dart';
@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
         '/uploadedvideo' : (context) => UploadedQuestions(),
         '/checkBox' : (context) => CheckBox(),
         '/profile': (context) => ProfilePage(),
+        '/questionsAsked': (context) => QuestionsAsked(),
       },
       home: LoginPage(title: 'Video Question App'),
 

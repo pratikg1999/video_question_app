@@ -6,11 +6,18 @@ import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 import 'dart:convert';
 
+
 class CheckBox extends StatefulWidget {
-  String name, email, phone, password;
+  String name,email,phone,password;
   int age;
 
-  CheckBox({this.age, this.name, this.password, this.email, this.phone});
+  CheckBox({
+    this.age,
+    this.name,
+    this.password,
+    this.email,
+    this.phone
+});
 
   @override
   CheckBoxState createState() => new CheckBoxState();
@@ -20,24 +27,24 @@ class CheckBoxState extends State<CheckBox> {
   Map<String, bool> values = {
     'Politics': false,
     'Sports': false,
-    'Machines': false,
-    'Music': false,
-    'Technology': false,
-    'Career': false,
-    'Job Interview': false,
-    'Current Events': false,
-    'Reasoning': false,
-    'Workout': false,
-    'Personality Developmen': false,
-    'Communication Skills': false,
-    'Fashion': false,
-    'Life': false,
-    'Education': false,
-    'Travelling': false,
-    'Relationships': false,
-    'Medical Science': false,
-    'Commerce': false,
-    'Engineering': false,
+    'Machines' : false,
+    'Music' : false,
+    'Technology':false,
+    'Career':false,
+    'Job Interview':false,
+    'Current Events':false,
+    'Reasoning':false,
+    'Workout':false,
+    'Personality Developmen':false,
+    'Communication Skills':false,
+    'Fashion':false,
+    'Life':false,
+    'Education':false,
+    'Travelling':false,
+    'Relationships':false,
+    'Medical Science':false,
+    'Commerce':false,
+    'Engineering':false,
   };
 
   final GlobalKey<ScaffoldState> _signupScaffoldKey = new GlobalKey();
