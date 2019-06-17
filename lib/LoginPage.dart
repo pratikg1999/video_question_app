@@ -61,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Text("Resend verification code"),
               color: Colors.blue,
               onPressed: () async {
+                _loginScaffoldKey.currentState.hideCurrentSnackBar();
                 var uri = new Uri.http(
                     "$serverIP:$serverPort", "/sendVerificationMail");
                 var request = new http.MultipartRequest("POST", uri);
@@ -158,7 +159,10 @@ class _LoginPageState extends State<LoginPage> {
           } else {
             _documentDir = await getApplicationDocumentsDirectory();
             File file = new File(join(_documentDir.path, 'profile_pic.png'));
-            file.deleteSync();
+            if(file.existsSync()){
+              file.deleteSync();
+            }
+
           }
           Navigator.of(context)
               .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
@@ -241,6 +245,7 @@ class _LoginPageState extends State<LoginPage> {
               new Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: new TextFormField(
+                  keyboardType: TextInputType.emailAddress,
                   controller: _emailController,
                   onSaved: (val) => _email = val,
                   validator: (val) {

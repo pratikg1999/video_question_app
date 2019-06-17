@@ -5,7 +5,6 @@ import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart' hide context;
 import 'package:path_provider/path_provider.dart';
-import 'package:simple_permissions/simple_permissions.dart';
 import 'package:teacher/constants.dart';
 import "package:image_picker/image_picker.dart";
 import 'package:teacher/shared_preferences_helpers.dart';
