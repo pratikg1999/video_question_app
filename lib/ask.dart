@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teacher/video.dart';
 import 'package:teacher/drawer.dart';
-import 'package:http/http.dart' as http;
-import 'package:teacher/shared_preferences_helpers.dart';
 import 'constants.dart';
 
 
@@ -30,6 +28,7 @@ class AskState extends State<Ask> {
   @override
   void initState() {
     getNameAndEmail();
+    super.initState();
   }
 
   @override

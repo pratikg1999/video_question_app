@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'package:teacher/SignUpPage.dart';
 import 'package:teacher/shared_preferences_helpers.dart';
@@ -12,7 +15,7 @@ Future<int> logOut() async {
   print("token is $tokenId");
   String email = await getFromSP(EMAIL_KEY_SP);
   print("email is $email");
-  var logoutUri = Uri.http("${serverIP}:${serverPort}", "/logOut");
+  var logoutUri = Uri.http("$serverIP:$serverPort", "/logOut");
   http.MultipartRequest request = http.MultipartRequest("POST", logoutUri);
   request.fields["tokenId"] = tokenId;
   request.fields["email"] = email;
@@ -38,6 +41,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  var _documentDir;
   final GlobalKey<ScaffoldState> _loginScaffoldKey = new GlobalKey();
   bool isPasswordValid = true;
   bool isEmailValid = true;
@@ -58,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
               color: Colors.blue,
               onPressed: () async {
                 var uri = new Uri.http(
-                    "${serverIP}:${serverPort}", "/sendVerificationMail");
+                    "$serverIP:$serverPort", "/sendVerificationMail");
                 var request = new http.MultipartRequest("POST", uri);
                 request.fields['email'] = _email;
                 var response = await request.send();
@@ -88,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
       USER_NAME = await getFromSP(USER_NAME_SP);
       EMAIL = await getFromSP(EMAIL_KEY_SP);
       print("already signed in");
-      Navigator.of(context)
+      Navigator.of(this.context) // TODO remove as BuildContext if error
           .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
     }
   }
@@ -99,6 +103,17 @@ class _LoginPageState extends State<LoginPage> {
     isPasswordValid = true;
     checkSignInStatus();
     super.initState();
+  }
+
+  Future downloadImage(imageName) async {
+    print("downloading pic");
+    var response = await http
+        .get(Uri.http("$serverIP:$serverPort", "/getProfilePic/$imageName"));
+    print(response.statusCode);
+    _documentDir = await getApplicationDocumentsDirectory();
+    File file = new File(join(_documentDir.path, 'profile_pic.png'));
+    file.writeAsBytesSync(response.bodyBytes);
+    print("pic downloaded");
   }
 
   @override
@@ -124,12 +139,27 @@ class _LoginPageState extends State<LoginPage> {
         if (response.statusCode == 200) {
           var resData = await response.stream.bytesToString();
           var resDataJson = jsonDecode(resData.toString());
+          print(resDataJson);
+          print(resDataJson["Interests"].toString());
           print("User Logged In");
           saveCurrentLogin(resDataJson['Token Id']);
           saveInSP(EMAIL_KEY_SP, _email);
           saveInSP(USER_NAME_SP, resDataJson["Name"]);
+          saveInSP(AGE_KEY_SP, resDataJson["Age"]);
+          saveInSP(PHONE_KEY_SP, resDataJson["Phone"]);
+          saveInSP(INTERESTS_KEY_SP, resDataJson["Interests"].toString());
           USER_NAME = resDataJson["Name"];
           EMAIL = _email;
+          if (resDataJson["ProfilePic"].toString() != "null") {
+            print(resDataJson["ProfilePic"]);
+            String profPic = resDataJson["ProfilePic"].toString();
+            await downloadImage(
+                profPic.substring(profPic.lastIndexOf("/") + 1));
+          } else {
+            _documentDir = await getApplicationDocumentsDirectory();
+            File file = new File(join(_documentDir.path, 'profile_pic.png'));
+            file.deleteSync();
+          }
           Navigator.of(context)
               .pushNamedAndRemoveUntil('/ask', (Route<dynamic> route) => false);
         } else {
@@ -145,7 +175,10 @@ class _LoginPageState extends State<LoginPage> {
                         child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        AlertDialog(content: Text("User is already signed in other device"),),
+                        AlertDialog(
+                          content:
+                              Text("User is already signed in other device"),
+                        ),
                       ],
                     ));
                   });
@@ -253,7 +286,7 @@ class _LoginPageState extends State<LoginPage> {
       appBar: new AppBar(
         title: new Text("Video Question App"),
       ),
-      body: new Container(
+      body: Container(
         decoration: new BoxDecoration(
           image: new DecorationImage(
               image: new AssetImage("assets/images/login_background.jpg"),

@@ -1,14 +1,9 @@
-import 'package:path/path.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:teacher/shared_preferences_helpers.dart';
 import 'constants.dart';
-import "dart:convert";
 import 'dart:io';
 import 'dart:core';
 import 'package:path_provider/path_provider.dart';
 import 'chewieListItem.dart';
-import 'package:video_player/video_player.dart';
 
 import 'drawer.dart';
 class UploadedQuestions extends StatefulWidget{

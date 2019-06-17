@@ -1,12 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'dart:core';
 import 'chewieListNetwork.dart';
-import 'constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:http_parser/http_parser.dart' ;
 import 'shared_preferences_helpers.dart';
 
 class QuestionsAsked extends StatefulWidget{
@@ -26,7 +23,7 @@ class QuestionsAskedState extends State<QuestionsAsked>{
     print(token);
 
     var response = await http.get(
-        Uri.encodeFull("http://192.168.43.27:8080/getQuestions?tokenId=${token}"),
+        Uri.encodeFull("http://192.168.43.27:8080/getQuestions?tokenId=$token"),
         headers:{
           "Accept": "application/json"
         }

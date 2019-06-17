@@ -8,8 +8,8 @@ import 'dart:convert';
 
 
 class CheckBox extends StatefulWidget {
-  String name,email,phone,password;
-  int age;
+  final String name,email,phone,password;
+  final int age;
 
   CheckBox({
     this.age,

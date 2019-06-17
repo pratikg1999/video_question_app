@@ -1,6 +1,12 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:teacher/LoginPage.dart';
 import 'shared_preferences_helpers.dart';
+import 'package:flutter/src/painting/image_provider.dart';
 
 class NavDrawer extends StatefulWidget {
   final String userName;
@@ -9,6 +15,7 @@ class NavDrawer extends StatefulWidget {
   NavDrawer({this.userName, this.email});
 
   DrawerState createState() {
+    print("drawer create states");
     return new DrawerState();
   }
 }
@@ -30,18 +37,70 @@ class DrawerState extends State<NavDrawer> {
 //  }
 
   @override
+  didUpdateWidget(a) {
+    // print("drawer didupdate widget");
+    initProfilePicFile();
+    super.didUpdateWidget(a);
+  }
+
+  File profilePicFile;
+  Future initProfilePicFile() async {
+    Directory appDir = await getApplicationDocumentsDirectory();
+    profilePicFile = File(join(appDir.path, "profile_pic.png"));
+    if (!profilePicFile.existsSync()) {
+      print("profile pic doesnt exist in file");
+      profilePicFile = null;
+    }
+    if (mounted == true) {
+      setState(() {
+        print(profilePicFile);
+        if (profilePicFile != null) {
+          FileImage(profilePicFile).evict();
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    initProfilePicFile();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         children: <Widget>[
           new UserAccountsDrawerHeader(
             currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Text(
-                widget.userName.substring(0, 1).toUpperCase(),
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
+                backgroundColor: Colors.white,
+                child: InkWell(
+                  child: Hero(
+                    tag: "profile-pic",
+                    child: Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: profilePicFile == null
+                                  ? AssetImage("assets/images/profile_pic.png")
+                                  : FileImage(profilePicFile))),
+                      // height: 50.0,
+                      // width: 50.0,
+                    ),
+                  ),
+                  onTap: () {
+                    // Navigator.of(context).pushNamedAndRemoveUntil(
+                    //     '/ask', (Route<dynamic> route) => false);
+                    Navigator.of(context).pushNamed('/profile');
+                  },
+                )
+                // Text(
+                //   widget.userName.substring(0, 1).toUpperCase(),
+                //   style: TextStyle(fontWeight: FontWeight.bold),
+                // ),
+                ),
             accountEmail: Text(widget.email),
             accountName: Text(widget.userName),
           ),
@@ -82,13 +141,13 @@ class DrawerState extends State<NavDrawer> {
                     '/ask', (Route<dynamic> route) => false);
                 Navigator.of(context).pushNamed('/answers');
               }),
-              ListTile(
+          ListTile(
               title: Text("My profile"),
               leading: Icon(Icons.person),
               trailing: Icon(Icons.arrow_forward),
               onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/ask', (Route<dynamic> route) => false);
+                // Navigator.of(context).pushNamedAndRemoveUntil(
+                //     '/ask', (Route<dynamic> route) => false);
                 Navigator.of(context).pushNamed('/profile');
               }),
           ListTile(

@@ -8,8 +8,8 @@ import 'package:teacher/shared_preferences_helpers.dart';
 
 uploadFile(String filePath) async {
   print("uploading");
-  var url = "${serverIP}:${serverPort}/uploadFile";
-  var uri = new Uri.http('${serverIP}:${serverPort}', '/uploadFile');
+  var url = "$serverIP:$serverPort/uploadFile";
+  var uri = new Uri.http('$serverIP:$serverPort', '/uploadFile');
 
   var token = await getCurrentTokenId();
 
@@ -39,7 +39,7 @@ uploadFile(String filePath) async {
         gravity: ToastGravity.BOTTOM,
         timeInSecForIos: 1,
        );
-      String currentTime=  DateTime.now().millisecondsSinceEpoch.toString();;
+      String currentTime=  DateTime.now().millisecondsSinceEpoch.toString();
       String newPath = videoDirectory.substring(0, videoDirectory.lastIndexOf("/")) + "/" + currentTime + "NotUploaded.mp4";
         print(newPath);
         File(filePath).renameSync(newPath);

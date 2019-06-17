@@ -3,6 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 const EMAIL_KEY_SP = "email";
 const TOKEN_KEY_SP = "Token";
 const USER_NAME_SP = "Name";
+const AGE_KEY_SP = "Age";
+const PHONE_KEY_SP = "Phone";
+const INTERESTS_KEY_SP = "Interests";
 
 saveCurrentLogin(String  token) async {
 

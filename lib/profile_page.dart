@@ -1,7 +1,16 @@
+import 'dart:io';
+
 import "package:flutter/material.dart";
+import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path/path.dart' hide context;
+import 'package:path_provider/path_provider.dart';
+import 'package:simple_permissions/simple_permissions.dart';
 import 'package:teacher/constants.dart';
-import 'package:teacher/drawer.dart';
+import "package:image_picker/image_picker.dart";
 import 'package:teacher/shared_preferences_helpers.dart';
+import 'package:http/http.dart' as http;
+// import 'package:teacher/drawer.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePageState createState() {
@@ -10,20 +19,145 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
+  final String _fullName = "Shweta Deosarkar";
+  final String _status = "Student";
+  final String _bio = "\"swedrftgyhujiklvcfd\"";
+  final String _quesAnswered = "12";
+  final String _quesAsked = "10";
+  File _image;
+  File _tempImage;
+  bool uploading = false;
+
+  Future initProfilePicFile() async {
+    Directory appDir = await getApplicationDocumentsDirectory();
+    _image = File(join(appDir.path, "profile_pic.png"));
+    print(_image.path);
+    if (!_image.existsSync()) {
+      _image = null;
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    initProfilePicFile();
+    super.initState();
+  }
+
+  Future<File> getImageFromGallery() async {
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    // _tempImage = _image;
+    // _image = image;
+    return image;
+  }
+
+  Future<File> getImageFromCamera() async {
+    File image = await ImagePicker.pickImage(source: ImageSource.camera);
+    // _tempImage = _image;
+    // _image = image;
+    return image;
+  }
+
+  Future changeProfilePic(File newImage) async {
+    if (newImage != null) {
+      setState(() {
+        _tempImage = _image;
+        _image = newImage;
+        uploading = true;
+      });
+      int responseCode = await uploadProfilePic(newImage);
+      if (responseCode == 200) {
+        // PermissionStatus per = await SimplePermissions.requestPermission(Permission.ReadExternalStorage);
+        // print(per);
+        String path = (await getApplicationDocumentsDirectory()).path;
+        print("copying to $path/profile_pic.png");
+        File pFile = File('$path/profile_pic.png');
+        // pFile.deleteSync();
+        // pFile.writeAsBytesSync((await http.get(Uri.http("$serverIP:$serverPort", "/getProfilePic/5cfe0b06e0efcb356ff5d63f.octet-stream"))).bodyBytes);
+        // File copyFile = newImage.copySync('$path/profile_pic.png');//.then((val){print("copy: $val");}).catchError((e){print(e);});
+        pFile.writeAsBytesSync(newImage.readAsBytesSync());
+        FileImage im = FileImage(pFile);
+        im.evict();
+        print("copying completed");
+        // showDialog(context:ctx, builder: (BuildContext context){
+        //   return AlertDialog(content: Image.file(File('$path/profile_pic.png')),);
+        // });
+        setState(() {
+          _image = File("$path/profile_pic.png");
+          uploading = false;
+        });
+        Fluttertoast.showToast(
+          msg: 'Profile pic changed',
+          toastLength: Toast.LENGTH_SHORT,
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: 'Unable to upload image',
+          toastLength: Toast.LENGTH_SHORT,
+        );
+        setState(() {
+          _image = _tempImage;
+          uploading = false;
+        });
+      }
+    }
+  }
+
+  Future<int> uploadProfilePic(File newImage) async {
+    var url = "$serverIP:$serverPort/uploadFile";
+    var uri = new Uri.http('$serverIP:$serverPort', '/uploadProfilePic');
+    var token = await getCurrentTokenId();
+    var request = new http.MultipartRequest("POST", uri);
+    print("successfuly parse the url $url");
+
+    request.files.add(await http.MultipartFile.fromPath("pic", newImage.path));
+    request.fields['tokenId'] = token;
+    var response;
+    try {
+      response = await request.send();
+    } catch (e) {
+      return 400;
+    }
+    return response.statusCode;
+  }
+
+  BuildContext ctx;
   @override
   Widget build(BuildContext context) {
+    ctx = context;
     return Scaffold(
-        drawer: NavDrawer(email: EMAIL, userName: USER_NAME),
+        // drawer: NavDrawer(email: EMAIL, userName: USER_NAME),
         appBar: AppBar(
           title: Text("Profile"),
         ),
-        body: ProfilePageBody());
+        body: profilePageBody());
   }
 
-  Widget ProfilePageBody() {
+  Widget profilePageBody() {
+    Size screenSize = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Column(
-        children: <Widget>[header(),],
+        children: <Widget>[
+          header(),
+          SizedBox(
+            height: 15.0,
+          ),
+          Text(
+            "Pratik Gupta ",
+            style: TextStyle(
+                fontFamily: "FiraSans",
+                fontWeight: FontWeight.bold,
+                fontSize: 30.0),
+          ),
+          _buildStatus(context),
+          _buildStatContainer(),
+          _buildBio(context),
+          _buildSeparator(screenSize),
+          SizedBox(height: 300.0),
+          _buildGetInTouch(context),
+          SizedBox(height: 80.0),
+          _buildButtons(),
+        ],
       ),
     );
   }
@@ -32,40 +166,300 @@ class ProfilePageState extends State<ProfilePage> {
     return Stack(
       children: <Widget>[
         bottomMostWidget(),
-        Positioned(
-          
-          child: Center(child: circularImage()),
-        )
+        circularImage(),
       ],
     );
   }
 
   Widget circularImage() {
-    return Card(
-      elevation: 8.0,
-      child: Container(
-          width: 100.0,
-          height: 100.0,
-          decoration: new BoxDecoration(
-            // border:   Border.all(color: Colors.white),
-              shape: BoxShape.circle,
-              image: new DecorationImage(
+    return Positioned(
+      // width: 150.0,
+      left: (MediaQuery.of(context).size.width - 150) / 2,
+      // right: 25.0,
+      top: MediaQuery.of(context).size.height / 6,
+      child: Stack(
+        children: <Widget>[
+          Hero(
+            tag: "profile-pic",
+            child: Container(
+              //key: UniqueKey(),
+              width: 150.0,
+              height: 150.0,
+              decoration: new BoxDecoration(
+                boxShadow: [BoxShadow(color: Colors.black, blurRadius: 7.0)],
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 3.0),
+                // borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                image: new DecorationImage(
+                  colorFilter: !uploading
+                      ? null
+                      : ColorFilter.mode(
+                          Colors.black.withOpacity(0.2), BlendMode.dstATop),
                   fit: BoxFit.fill,
-                  image: new AssetImage("assets/images/profile_pic.jpg")))),
+                  image: _image != null
+                      ? FileImage(_image)
+                      : new AssetImage("assets/images/profile_pic.png"),
+                ),
+              ),
+              child: !uploading
+                  ? null
+                  : Center(child: CircularProgressIndicator()),
+            ),
+          ),
+          Positioned(
+            top: 100,
+            left: 100,
+            child: InkWell(
+              child: Container(
+                padding: EdgeInsets.all(3.0),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.3),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                ),
+              ),
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          child: AlertDialog(
+                            title: Text("Pick new image"),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                FlatButton.icon(
+                                  color: Colors.white.withOpacity(0.1),
+                                  // shape: CircleBorder(side: BorderSide()),
+                                  icon: Icon(Icons.add_a_photo),
+                                  label: Text("Choose from gallery"),
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    File newImage = await getImageFromGallery();
+                                    changeProfilePic(newImage);
+                                  },
+                                ),
+                                FlatButton.icon(
+                                  // shape: CircleBorder(side: BorderSide()),
+                                  icon: Icon(Icons.wallpaper),
+                                  label: Text("Choose from camera"),
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    File newImage = await getImageFromCamera();
+                                    changeProfilePic(newImage);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    });
+              },
+            ),
+          )
+        ],
+      ),
     );
   }
 
   Widget bottomMostWidget() {
     return Column(
+      mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        Image.asset("assets/images/login_background.jpg"),
-        Padding(
-          padding: EdgeInsets.only(top: 2.0),
-        ),
-        Container(
-          child: Text("Pratik Gupta"),
+        ClipPath(
+          child: Container(
+            height: 3 * MediaQuery.of(context).size.height / 7,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.black.withOpacity(0.8),
+          ),
+          clipper: GetClipper(),
         ),
       ],
     );
+  }
+
+  Widget _buildStatus(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      child: Text(
+        _status,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 20.0,
+          fontWeight: FontWeight.w300,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String label, String count) {
+    TextStyle _statLabelTextStyle = TextStyle(
+      color: Colors.black,
+      fontWeight: FontWeight.w200,
+      fontSize: 16.0,
+    );
+    TextStyle _statCountStyle = TextStyle(
+      color: Colors.black54,
+      fontSize: 24.0,
+      fontWeight: FontWeight.bold,
+    );
+    return Container(
+      height: 60.0,
+      margin: EdgeInsets.only(top: 8.0),
+      decoration: BoxDecoration(
+        color: Color(0xFFEFF4F7),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                count,
+                style: _statCountStyle,
+              ),
+              Text(
+                label,
+                style: _statLabelTextStyle,
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatContainer() {
+    return Container(
+      height: 60.0,
+      margin: EdgeInsets.only(top: 8.0),
+      decoration: BoxDecoration(
+        color: Color(0xFFEFF4F7),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          _buildStatItem("Questions Asked", _quesAsked),
+          _buildStatItem("Questions Answered", _quesAnswered),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBio(BuildContext context) {
+    TextStyle _bioTextStyle = TextStyle(
+      fontWeight: FontWeight.w500,
+      fontSize: 16.0,
+      fontStyle: FontStyle.italic,
+      color: Color(0xFF799497),
+    );
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      padding: EdgeInsets.all(8.0),
+      child: Text(
+        _bio,
+        textAlign: TextAlign.center,
+        style: _bioTextStyle,
+      ),
+    );
+  }
+
+  Widget _buildSeparator(Size screenSize) {
+    return Container(
+      width: screenSize.width / 1.6,
+      height: 2.0,
+      color: Colors.black54,
+      margin: EdgeInsets.only(top: 4.0),
+    );
+  }
+
+  Widget _buildGetInTouch(BuildContext context) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      padding: EdgeInsets.only(top: 8.0),
+      child: Text(
+        "Get in touch with ${_fullName.split(" ")[0]}",
+        style: TextStyle(fontSize: 16.0),
+      ),
+    );
+  }
+
+  Widget _buildButtons() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: InkWell(
+              onTap: () => print("Asked"),
+              child: Container(
+                height: 40.0,
+                decoration: BoxDecoration(
+                  border: Border.all(),
+                  color: Color(0xFF404A5C),
+                ),
+                child: Center(
+                  child: Text(
+                    "ASK",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 10.0),
+          Expanded(
+            child: InkWell(
+              onTap: () => print("Message"),
+              child: Container(
+                height: 40.0,
+                decoration: BoxDecoration(
+                  border: Border.all(),
+                ),
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      "Message",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class GetClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = new Path();
+    path.lineTo(0.0, size.height);
+    path.lineTo(size.width + 150, 0.0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
   }
 }

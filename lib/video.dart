@@ -4,7 +4,6 @@ import 'package:simple_permissions/simple_permissions.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:video_player/video_player.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'uploadVideo.dart';
 
@@ -355,7 +354,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     });
     await Directory(videoDirectory).create(recursive: true);
 
-    final String filePath = '$videoDirectory/${currentTime}.mp4';
+    final String filePath = '$videoDirectory/$currentTime.mp4';
 
     try {
       await controller.startVideoRecording(filePath);

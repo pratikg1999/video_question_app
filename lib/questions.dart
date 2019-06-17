@@ -4,7 +4,6 @@ import 'dart:io';
 import 'dart:core';
 import 'package:path_provider/path_provider.dart';
 import 'chewieListItem.dart';
-import 'package:video_player/video_player.dart';
 import 'constants.dart';
 import 'drawer.dart';
 import 'uploadVideo.dart';
