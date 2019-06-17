@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'uploadVideo.dart';
+import 'storeJson.dart';
+import 'package:teacher/shared_preferences_helpers.dart';
 
 class VideoRecorderExample extends StatefulWidget {
   @override
@@ -22,6 +24,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   int selectedCameraIdx;
   bool toUpload = true;
   String currentTime;
+  String email;
   String videoDirectory;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -281,6 +284,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
                     _stopVideoRecording().then((_) {
                       if (mounted) setState(() {});
                     });
+                    addToFile( email,currentTime+".mp4","Uploaded");
                     Navigator.of(context).pop();
                     return;
                   },
@@ -294,6 +298,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
                     _stopVideoRecording().then((_) {
                       if (mounted) setState(() {});
                     });
+                    addToFile(email,currentTime+ "NotUploaded" +".mp4","Not_Uploaded");
                     Navigator.of(context).pop();
                     return;
                   },
@@ -329,6 +334,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   }
 
   Future<String> _startVideoRecording() async {
+    email =  await getFromSP(EMAIL_KEY_SP);
     if (!controller.value.isInitialized) {
       Fluttertoast.showToast(
           msg: 'Please wait',

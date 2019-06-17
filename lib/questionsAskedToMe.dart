@@ -5,6 +5,9 @@ import 'chewieListNetwork.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'shared_preferences_helpers.dart';
+import 'constants.dart';
+import 'package:teacher/shared_preferences_helpers.dart';
+import 'drawer.dart';
 
 class QuestionsAsked extends StatefulWidget{
   @override
@@ -16,7 +19,8 @@ class QuestionsAsked extends StatefulWidget{
 class QuestionsAskedState extends State<QuestionsAsked>{
 
   List list;
-
+  String _name = USER_NAME;
+  String _email = EMAIL;
   Future<void> setter () async {
 
     var token = await getCurrentTokenId();
@@ -95,6 +99,7 @@ class QuestionsAskedState extends State<QuestionsAsked>{
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),
+        drawer : NavDrawer(userName:_name,email:_email),
         body: Container(
           child: ListView(
             children: getVideos(),

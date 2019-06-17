@@ -12,7 +12,6 @@ class NavDrawer extends StatefulWidget {
   NavDrawer({this.userName, this.email});
 
   DrawerState createState() {
-    print("drawer create states");
     return new DrawerState();
   }
 }
@@ -109,8 +108,18 @@ class DrawerState extends State<NavDrawer> {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     '/ask', (Route<dynamic> route) => false);
               }
-              //Navigator.of(context).pushNamed('/ask'),
-              ),
+            //Navigator.of(context).pushNamed('/ask'),
+          ),
+          ListTile(
+              title: Text("Questions asked"),
+              leading: Icon(Icons.question_answer),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/questionsAsked', (Route<dynamic> route) => false);
+              }
+            //Navigator.of(context).pushNamed('/ask'),
+          ),
           ListTile(
               title: Text("Not Uploaded questions"),
               leading: Icon(Icons.card_membership),

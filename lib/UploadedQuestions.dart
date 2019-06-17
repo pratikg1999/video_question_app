@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:teacher/shared_preferences_helpers.dart';
 import 'constants.dart';
 import 'dart:io';
+import 'dart:async';
 import 'dart:core';
 import 'package:path_provider/path_provider.dart';
 import 'chewieListItem.dart';
+import 'storeJson.dart';
 
 import 'drawer.dart';
 class UploadedQuestions extends StatefulWidget{
@@ -19,60 +22,66 @@ class UploadedQuestionsState extends State<StatefulWidget>{
   String videoDirectoryPath;
   List<String> list;
   File myfile;
+    String email;
+
+
+    void initState(){
+      super.initState();
+      setter();
+    }
 
   void setter () async {
-
+    email = await getFromSP(EMAIL_KEY_SP);
     appDirectory = await getExternalStorageDirectory();
     videoDirectoryPath = '${appDirectory.path}/Drupal_Videos';
     await Directory(videoDirectoryPath).create(recursive: true);
     videoDirectory = Directory.fromUri(Uri.file(videoDirectoryPath));
     List<String> l = List<String>();
-    List contents = videoDirectory.listSync();
-    for(var file in contents){
-      String temp = file.toString().substring(file.toString().lastIndexOf('/'),file.toString().length-1);
-      if(!temp.endsWith("NotUploaded.mp4"))
-        l.add(temp);
-    }
 
-    setState(() {
-      list = l;
+    l = await getUploaded(email);
+
+    Timer(Duration(seconds: 1),(){
+      setState(() {
+        list = l;
+      });
     });
-
   }
-  String data = "fetching";
-
 
   List<Widget> getVideos(){
 
     List<Widget> listArray = List<Widget>();
     if(list!=null) {
       for (var i = 0; i < list.length; i++) {
-        String path = videoDirectoryPath + list[i];
+        String path = videoDirectoryPath + "/"+list[i];
         myfile = new File(path);
         listArray.add(new ChewieListItem(
             file: myfile));
       }
     }
-    else {
-      listArray.add(Text("No Videos"));
-    }
-      return listArray;
-    }
+    return listArray;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context){
 
-    setter();
+//    setter();
     return new Scaffold(
-      drawer: NavDrawer(userName: USER_NAME, email: EMAIL,),
+
+        drawer: NavDrawer(userName: USER_NAME, email: EMAIL,),
+
         appBar: new AppBar(
-          title: new Text("Video Question App"),
-        ),
-        body: Container(
-          child: ListView(
-            children: getVideos(),
-          ),
-        )
+             title: new Text("Video Question App"),
+    ),
+         body: Container(
+            child: ListView(
+                children: getVideos(),
+    ),
+    )
     );
-  }
+    }
 }
