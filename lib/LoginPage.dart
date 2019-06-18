@@ -3,7 +3,7 @@ import 'dart:core';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' hide context;
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'package:teacher/SignUpPage.dart';
@@ -11,6 +11,8 @@ import 'package:teacher/shared_preferences_helpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:teacher/constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'ask.dart';
+import 'Institute.dart';
 
 Future<int> logOut() async {
   String tokenId = await getCurrentTokenId();
@@ -138,6 +140,7 @@ class _LoginPageState extends State<LoginPage> {
         print(request);
         print(_email);
         print(_password);
+        // print("headers: ${request.headers}");
         var response = await request.send();
         if (response.statusCode == 200) {
           var resData = await response.stream.bytesToString();
@@ -148,7 +151,8 @@ class _LoginPageState extends State<LoginPage> {
           saveCurrentLogin(resDataJson['Token Id']);
           saveInSP(EMAIL_KEY_SP, _email);
           saveInSP(USER_NAME_SP, resDataJson["Name"]);
-          saveInSP(AGE_KEY_SP, resDataJson["Age"]);
+          await saveInSP(AGE_KEY_SP, resDataJson["Age"]);
+          print(await getFromSP(AGE_KEY_SP));
           saveInSP(PHONE_KEY_SP, resDataJson["Phone"]);
           saveInSP(INTERESTS_KEY_SP, resDataJson["Interests"].toString());
           USER_NAME = resDataJson["Name"];
@@ -231,11 +235,12 @@ class _LoginPageState extends State<LoginPage> {
       color: Colors.primaries[3],
     );
     var registerBtn = new FlatButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => SignUp()),
-          );
+        onPressed: () async {
+          await _showDialog();
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => SignUp()),
+          // );
         },
         child: new Text("Create a new account"));
     var loginForm = new Column(
@@ -316,6 +321,47 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
+    );
+  }
+
+
+  Future<void> _showDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return
+          Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  AlertDialog(
+                    title: new Text("Select an option"),
+                    content: new Text("Are you a personal user or an institute?"),
+                    actions: <Widget>[
+                      new FlatButton(
+                        child: new Text("Personal User"),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SignUp()),
+                          );
+                        },
+                      ),
+                      new FlatButton(
+                        child: new Text("Institute"),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Institute()),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              )
+          );
+      },
     );
   }
 }

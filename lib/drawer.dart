@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:teacher/LoginPage.dart';
+import 'package:teacher/constants.dart';
 import 'shared_preferences_helpers.dart';
 
 class NavDrawer extends StatefulWidget {
@@ -17,6 +18,8 @@ class NavDrawer extends StatefulWidget {
 }
 
 class DrawerState extends State<NavDrawer> {
+  String userName = USER_NAME;
+  String email = EMAIL;
 //  void logOutAction() async {
 //    showDialog(
 //        context: context,
@@ -36,6 +39,7 @@ class DrawerState extends State<NavDrawer> {
   didUpdateWidget(a) {
     // print("drawer didupdate widget");
     initProfilePicFile();
+    userName = USER_NAME;
     super.didUpdateWidget(a);
   }
 
@@ -97,8 +101,8 @@ class DrawerState extends State<NavDrawer> {
                 //   style: TextStyle(fontWeight: FontWeight.bold),
                 // ),
                 ),
-            accountEmail: Text(widget.email),
-            accountName: Text(widget.userName),
+            accountEmail: Text(email),
+            accountName: Text(userName),
           ),
           ListTile(
               title: Text("Ask question"),

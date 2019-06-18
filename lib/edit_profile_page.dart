@@ -18,14 +18,37 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-  final String _fullName = "Shweta Deosarkar";
-  final String _status = "Student";
-  final String _bio = "\"swedrftgyhujiklvcfd\"";
-  final String _quesAnswered = "12";
-  final String _quesAsked = "10";
+  // String _fullName = "fullname";
+  String _status = "hey";
+  String _bio = "programmer";
+  String _quesAnswered = "12";
+  String _quesAsked = "10";
   File _image;
   File _tempImage;
   bool uploading = false;
+  final formkey = GlobalKey<FormState>();
+
+  String fullName = USER_NAME;
+  String age;
+  String phone;
+
+  String _name;
+  int _age;
+  String _phone;
+
+  var nameController = TextEditingController();
+  var ageController = TextEditingController();
+  var phoneController = TextEditingController();
+  void getInfo() async {
+    // _fullName = await getFromSP(USER_NAME_SP);
+    age = await getFromSP(AGE_KEY_SP);
+    print("age id: $age");
+    phone = await getFromSP(PHONE_KEY_SP);
+    nameController.text = fullName;
+    ageController.text = age;
+    phoneController.text = phone;
+    setState(() {});
+  }
 
   Future initProfilePicFile() async {
     Directory appDir = await getApplicationDocumentsDirectory();
@@ -40,6 +63,7 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     initProfilePicFile();
+    getInfo();
     super.initState();
   }
 
@@ -142,21 +166,118 @@ class ProfilePageState extends State<ProfilePage> {
             height: 15.0,
           ),
           Text(
-            "Pratik Gupta ",
+            fullName,
             style: TextStyle(
                 fontFamily: "FiraSans",
                 fontWeight: FontWeight.bold,
                 fontSize: 30.0),
           ),
-          _buildStatus(context),
+          // _buildStatus(context),
           _buildStatContainer(),
-          _buildBio(context),
-          _buildSeparator(screenSize),
-          SizedBox(height: 300.0),
-          _buildGetInTouch(context),
-          SizedBox(height: 80.0),
-          _buildButtons(),
+          // _buildBio(context),
+          // _buildSeparator(screenSize),
+          // SizedBox(height: 300.0),
+          // _buildGetInTouch(context),
+          // SizedBox(height: 80.0),
+          // _buildButtons(),
+          SizedBox(height: 20.0),
+          Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Form(
+                key: formkey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    TextFormField(
+                        controller: nameController,
+                        decoration: InputDecoration(
+                            labelText: 'Name:', hintText: "xyz abc"),
+                        validator: (input) {
+                          if (input.length < 3) {
+                            return 'Name must contain atleast three letters';
+                          } else {
+                            return null;
+                          }
+                        },
+                        onSaved: (input) {
+                          _name = input;
+                        }),
+                    TextFormField(
+                      controller: phoneController,
+                      decoration: InputDecoration(
+                          labelText: 'Phone:', hintText: "123xxxxx12"),
+                      keyboardType: TextInputType.phone,
+                      validator: (input) {
+                        if (input.length < 10) {
+                          return 'Phone number is invalid';
+                        } else {
+                          return null;
+                        }
+                      },
+                      onSaved: (input) => _phone = input,
+                    ),
+                    TextFormField(
+                      controller: ageController,
+                      keyboardType: TextInputType.number,
+                      decoration:
+                          InputDecoration(labelText: "Age: ", hintText: "__"),
+                      onSaved: (input) => _age = int.parse(input),
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Center(
+                      child: saveButton(),
+                    ),
+                  ],
+                ),
+              )),
         ],
+      ),
+    );
+  }
+
+  // Widget _buildTextField(String label, String hintText) {
+  //   return Row(
+  //     children: <Widget>[
+  //       Text(label + ": "),
+  //       TextField(
+  //         controller: textControllers[label],
+  //         decoration: new InputDecoration(
+  //           border: new OutlineInputBorder(
+  //             borderRadius: const BorderRadius.all(
+  //               const Radius.circular(15.0),
+  //             ),
+  //           ),
+  //           filled: true,
+  //           hintStyle: new TextStyle(color: Colors.grey[800]),
+  //           hintText: hintText,
+  //           labelText: label,
+  //           fillColor: Colors.white70,
+  //         ),
+  //       ),
+  //     ],
+  //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //   );
+  // }
+
+  Widget saveButton() {
+    return Container(
+      height: 30.0,
+      width: 95.0,
+      child: Material(
+        borderRadius: BorderRadius.circular(10.0),
+        shadowColor: Colors.greenAccent,
+        color: Colors.green,
+        elevation: 7.0,
+        child: GestureDetector(
+          child: Container(
+            child: Center(
+              child: Text("Save changes"),
+            ),
+          ),
+          onTap: saveChanges,
+        ),
       ),
     );
   }
@@ -283,23 +404,23 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildStatus(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(4.0),
-      ),
-      child: Text(
-        _status,
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 20.0,
-          fontWeight: FontWeight.w300,
-        ),
-      ),
-    );
-  }
+  // Widget _buildStatus(BuildContext context) {
+  //   return Container(
+  //     padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
+  //     decoration: BoxDecoration(
+  //       color: Theme.of(context).scaffoldBackgroundColor,
+  //       borderRadius: BorderRadius.circular(4.0),
+  //     ),
+  //     child: Text(
+  //       _status,
+  //       style: TextStyle(
+  //         color: Colors.black,
+  //         fontSize: 20.0,
+  //         fontWeight: FontWeight.w300,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildStatItem(String label, String count) {
     TextStyle _statLabelTextStyle = TextStyle(
@@ -356,23 +477,23 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildBio(BuildContext context) {
-    TextStyle _bioTextStyle = TextStyle(
-      fontWeight: FontWeight.w500,
-      fontSize: 16.0,
-      fontStyle: FontStyle.italic,
-      color: Color(0xFF799497),
-    );
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        _bio,
-        textAlign: TextAlign.center,
-        style: _bioTextStyle,
-      ),
-    );
-  }
+  // Widget _buildBio(BuildContext context) {
+  //   TextStyle _bioTextStyle = TextStyle(
+  //     fontWeight: FontWeight.w500,
+  //     fontSize: 16.0,
+  //     fontStyle: FontStyle.italic,
+  //     color: Color(0xFF799497),
+  //   );
+  //   return Container(
+  //     color: Theme.of(context).scaffoldBackgroundColor,
+  //     padding: EdgeInsets.all(8.0),
+  //     child: Text(
+  //       _bio,
+  //       textAlign: TextAlign.center,
+  //       style: _bioTextStyle,
+  //     ),
+  //   );
+  // }
 
   Widget _buildSeparator(Size screenSize) {
     return Container(
@@ -383,67 +504,124 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildGetInTouch(BuildContext context) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.only(top: 8.0),
-      child: Text(
-        "Get in touch with ${_fullName.split(" ")[0]}",
-        style: TextStyle(fontSize: 16.0),
-      ),
-    );
-  }
+  // Widget _buildGetInTouch(BuildContext context) {
+  //   return Container(
+  //     color: Theme.of(context).scaffoldBackgroundColor,
+  //     padding: EdgeInsets.only(top: 8.0),
+  //     child: Text(
+  //       "Get in touch with ${fullName.split(" ")[0]}",
+  //       style: TextStyle(fontSize: 16.0),
+  //     ),
+  //   );
+  // }
 
-  Widget _buildButtons() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: InkWell(
-              onTap: () => print("Asked"),
-              child: Container(
-                height: 40.0,
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                  color: Color(0xFF404A5C),
-                ),
-                child: Center(
-                  child: Text(
-                    "ASK",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: 10.0),
-          Expanded(
-            child: InkWell(
-              onTap: () => print("Message"),
-              child: Container(
-                height: 40.0,
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                ),
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      "Message",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
+  // Widget _buildButtons() {
+  //   return Padding(
+  //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+  //     child: Row(
+  //       children: <Widget>[
+  //         Expanded(
+  //           child: InkWell(
+  //             onTap: () => print("Asked"),
+  //             child: Container(
+  //               height: 40.0,
+  //               decoration: BoxDecoration(
+  //                 border: Border.all(),
+  //                 color: Color(0xFF404A5C),
+  //               ),
+  //               child: Center(
+  //                 child: Text(
+  //                   "ASK",
+  //                   style: TextStyle(
+  //                     color: Colors.white,
+  //                     fontWeight: FontWeight.w600,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         SizedBox(width: 10.0),
+  //         Expanded(
+  //           child: InkWell(
+  //             onTap: () => print("Message"),
+  //             child: Container(
+  //               height: 40.0,
+  //               decoration: BoxDecoration(
+  //                 border: Border.all(),
+  //               ),
+  //               child: Center(
+  //                 child: Padding(
+  //                   padding: EdgeInsets.all(10.0),
+  //                   child: Text(
+  //                     "Message",
+  //                     style: TextStyle(fontWeight: FontWeight.w600),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         )
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  void saveChanges() async {
+    if(formkey.currentState.validate()){
+
+      formkey.currentState.save();
+      var token = await getCurrentTokenId();
+      print(token.toString());
+      var response;
+      var uri = new Uri.http("${serverIP}:${serverPort}", "/users/updateinfo");
+      var request = new http.MultipartRequest("PUT", uri);
+      print(_name);
+      print(_phone);
+      print(_age);
+      request.fields["name"] = _name;
+      request.fields["phone"] = _phone;
+      request.fields['age'] = _age.toString();
+      request.fields["tokenId"] = token;
+      print(request.headers);
+      try {
+        response = await request.send();
+        print(response.toString() + "-------------------------");
+        if (response.statusCode == 200) {
+          saveInSP(USER_NAME_SP, _name);
+          saveInSP(AGE_KEY_SP, _age.toString());
+          saveInSP(PHONE_KEY_SP, _phone);
+          USER_NAME = _name;
+          fullName = _name;
+          setState((){});
+          Fluttertoast.showToast(
+              msg: 'Changes saved successfully!!!',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIos: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white);
+        } else {
+          var error = await response.stream.bytesToString();
+          print(error);
+          Fluttertoast.showToast(
+              msg: 'Profile not updated!!',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIos: 2,
+              backgroundColor: Colors.black,
+              textColor: Colors.white);
+        }
+      } catch (e) {
+        Fluttertoast.showToast(
+            msg: 'Profile not updated!!',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIos: 2,
+            backgroundColor: Colors.black,
+            textColor: Colors.white);
+      }
+    }
   }
 }
 

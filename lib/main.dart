@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teacher/SignUpPage.dart';
 import 'package:teacher/LoginPage.dart';
 import 'package:teacher/answers.dart';
-import 'package:teacher/profile_page.dart';
+import 'package:teacher/edit_profile_page.dart';
 import 'questionsAskedToMe.dart';
 import 'ask.dart';
 import 'checkBoxList.dart';
