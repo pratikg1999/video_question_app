@@ -8,8 +8,10 @@ import 'ask.dart';
 import 'checkBoxList.dart';
 import 'package:teacher/NotUploadedQuestions.dart';
 import 'UploadedQuestions.dart';
-
+import 'viewProfile.dart';
 void main() => runApp(MyApp());
+
+
 
 class MyApp extends StatelessWidget {
 
@@ -31,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/checkBox' : (context) => CheckBox(),
         '/profile': (context) => ProfilePage(),
         '/questionsAsked': (context) => QuestionsAsked(),
+        '/view' : (context) => ViewPage(),
       },
       home: LoginPage(title: 'Video Question App'),
 

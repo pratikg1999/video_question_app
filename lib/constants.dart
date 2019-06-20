@@ -1,6 +1,6 @@
 
 /// Server's IP address
-final String serverIP =  "192.168.43.244";
+final String serverIP =  "192.168.43.27";
 
 /// Server's port address
 final String serverPort = "8080";   
@@ -16,3 +16,4 @@ const String ERROR_USER_ALREADY_EXISTS = "User with this email already exists";
 // To store username and email used in Drawers (dont delete it)
 String USER_NAME;
 String EMAIL;
+bool isUser=true;

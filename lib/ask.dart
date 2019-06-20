@@ -3,7 +3,7 @@ import 'package:teacher/shared_preferences_helpers.dart';
 import 'package:teacher/video.dart';
 import 'package:teacher/drawer.dart';
 import 'constants.dart';
-
+import 'viewProfile.dart';
 
 
 class Ask extends StatefulWidget {
@@ -54,7 +54,7 @@ class AskState extends State<Ask> {
                     onPressed: (){
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => VideoRecorderExample()),
+                        MaterialPageRoute(builder: (context) => ViewPage()),
                       );
                     },
                     child: new Text("Ask Question"),

@@ -53,6 +53,8 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController(text: _email);
   final _passwordController = TextEditingController(text: _password);
 
+
+
   Widget snackbarEmailVerification(String errText) {
     return SnackBar(
       content: Column(
@@ -128,6 +130,9 @@ class _LoginPageState extends State<LoginPage> {
 //    final _passwordController = TextEditingController();
 
     _submit() async {
+
+
+
       if (formkey.currentState.validate()) {
         formkey.currentState.save();
 
@@ -145,6 +150,7 @@ class _LoginPageState extends State<LoginPage> {
         if (response.statusCode == 200) {
           var resData = await response.stream.bytesToString();
           var resDataJson = jsonDecode(resData.toString());
+          print("USER INFORMATION");
           print(resDataJson);
           print(resDataJson["Interests"].toString());
           print("User Logged In");
@@ -223,6 +229,31 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         print("INVALID");
       }
+
+      var URI = new Uri.http("$serverIP:$serverPort", "/getType");
+      var Request = new http.MultipartRequest("GET", URI);
+      Request.fields["email"] = _email;
+      print("REQUEST");
+      print(Request.toString());
+      var Response = await Request.send();
+      print(Response.toString());
+      if(Response.statusCode==200){
+        String resData = await Response.stream.bytesToString();
+        if(resData == "User")
+        {
+          isUser=true;
+        }else{
+          isUser=false;
+        }
+        print("TYPE------------");
+        print(resData);
+      }else{
+        print("ËRROR");
+      }
+
+
+
+
     }
 
     var loginBtn = new RaisedButton(
