@@ -6,16 +6,17 @@ import 'package:teacher/edit_profile_page.dart';
 import 'questionsAskedToMe.dart';
 import 'ask.dart';
 import 'checkBoxList.dart';
+import 'answerToMyQuestion.dart';
 import 'package:teacher/NotUploadedQuestions.dart';
 import 'UploadedQuestions.dart';
-
+import 'storeJson.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //deleteFile("henilj1999@gmail.com");
+    // deleteFile("prateek.pratik.gupta@gmail.com");
     return MaterialApp(
       title: 'Video Question App',
       theme: ThemeData(
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         '/checkBox' : (context) => CheckBox(),
         '/profile': (context) => ProfilePage(),
         '/questionsAsked': (context) => QuestionsAsked(),
+        '/answersPage' : (context) => AnswersOfMyQuestion(),
       },
       home: LoginPage(title: 'Video Question App'),
 

@@ -115,32 +115,22 @@ class DrawerState extends State<NavDrawer> {
             //Navigator.of(context).pushNamed('/ask'),
           ),
           ListTile(
-              title: Text("Questions asked"),
-              leading: Icon(Icons.question_answer),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/questionsAsked', (Route<dynamic> route) => false);
-              }
-            //Navigator.of(context).pushNamed('/ask'),
-          ),
-          ListTile(
-              title: Text("Not Uploaded questions"),
-              leading: Icon(Icons.card_membership),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/ask', (Route<dynamic> route) => false);
-                Navigator.of(context).pushNamed('/questions');
-              }),
-          ListTile(
-              title: Text("Uploaded questions"),
+              title: Text("My Uploaded questions"),
               leading: Icon(Icons.card_membership),
               trailing: Icon(Icons.arrow_forward),
               onTap: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     '/ask', (Route<dynamic> route) => false);
                 Navigator.of(context).pushNamed('/uploadedvideo');
+              }),
+              ListTile(
+              title: Text("My Not Uploaded questions"),
+              leading: Icon(Icons.card_membership),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/ask', (Route<dynamic> route) => false);
+                Navigator.of(context).pushNamed('/questions');
               }),
           ListTile(
               title: Text("My answers"),
@@ -151,6 +141,27 @@ class DrawerState extends State<NavDrawer> {
                     '/ask', (Route<dynamic> route) => false);
                 Navigator.of(context).pushNamed('/answers');
               }),
+              ListTile(
+              title: Text("Questions for me"),
+              leading: Icon(Icons.question_answer),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/questionsAsked', (Route<dynamic> route) => false);
+              }
+              
+            //Navigator.of(context).pushNamed('/ask'),
+          ),
+          ListTile(
+              title: Text("Answers To My Question"),
+              leading: Icon(Icons.question_answer),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/answersPage', (Route<dynamic> route) => false);
+              }
+            //Navigator.of(context).pushNamed('/ask'),
+          ),
           ListTile(
               title: Text("My profile"),
               leading: Icon(Icons.person),

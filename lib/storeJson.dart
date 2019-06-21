@@ -44,6 +44,7 @@ import 'package:path_provider/path_provider.dart'; //add path provider dart plug
     getApplicationDocumentsDirectory().then((Directory directory) {
       dir = directory;
       jsonFile = new File(dir.path + "/" + email);
+      print(jsonFile.path);
       if(!jsonFile.existsSync()){
         Map<String,String> temp = new Map();
         createFile(temp, dir, email);

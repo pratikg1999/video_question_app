@@ -21,7 +21,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   String videoPath;
 
   List<CameraDescription> cameras;
-  int selectedCameraIdx;
+  int selectedCameraIdx = 0;
   bool toUpload = true;
   String currentTime;
   String email;
@@ -38,27 +38,44 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     }
   }
 
+  Future<void> _setUpCameras() async {
+try {
+      // initialize cameras.
+      cameras = await availableCameras();
+      // initialize camera controllers.
+      controller = new CameraController(cameras[0], ResolutionPreset.medium);
+      await controller.initialize();
+    } on CameraException catch (e) {
+      print(e);
+      await controller.initialize();
+    }
+    if (mounted==false) return;
+    setState(() {
+
+    });
+  }
   @override
   void initState() {
     super.initState();
     requestWritePermission();
     // Get the listonNewCameraSelected of available cameras.
     // Then set the first camera as selected.
-    availableCameras()
-        .then((availableCameras) {
-      cameras = availableCameras;
-
-      if (cameras.length > 0) {
-        setState(() {
-          selectedCameraIdx = 0;
-        });
-
-        _onCameraSwitched(cameras[selectedCameraIdx]).then((void v) {});
-      }
-    })
-        .catchError((err) {
-      print('Error: $err.code\nError Message: $err.message');
-    });
+    // availableCameras()
+    //     .then((availableCameras) {
+    //   cameras = availableCameras;
+    //   print(cameras);
+    //   if (cameras.length > 0) {
+    //     setState(() {
+    //       selectedCameraIdx = 0;
+    //     });
+    //     print(selectedCameraIdx);
+    //     _onCameraSwitched(cameras[selectedCameraIdx]).then((void v) {});
+    //   }
+    // })
+    //     .catchError((err) {
+    //   print('Error: $err.code\nError Message: $err.message');
+    // });
+    _setUpCameras();
   }
 
   @override
@@ -66,7 +83,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Camera example'),
+        title: const Text('Ask Question'),
       ),
       body: Column(
         children: <Widget>[
@@ -122,6 +139,8 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
 
   // Display 'Loading' text when the camera is still loading.
   Widget _cameraPreviewWidget() {
+    print("controller: $controller");
+    print(controller?.value);
     if (controller == null || !controller.value.isInitialized) {
       return const Text(
         'Loading',
@@ -142,6 +161,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   /// Display a row of toggle to select the camera (or a message if no camera is available).
   Widget _cameraTogglesRowWidget() {
     if (cameras == null) {
+      print("cameras is null");
       return Row();
     }
 
@@ -224,7 +244,9 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     });
 
     try {
+      print("initializing");
       await controller.initialize();
+      print("intialze complete");
     } on CameraException catch (e) {
       _showCameraException(e);
     }
