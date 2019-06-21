@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:teacher/viewProfile.dart';
 import 'package:video_player/video_player.dart';
 import 'drawer.dart';
 import 'constants.dart';
@@ -71,7 +72,8 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
   showQuestion(String quesPath) async {
     String fileName = quesPath.substring(quesPath.lastIndexOf("/") + 1);
     print("http://$serverIP:$serverPort/downloadFile/$fileName");
-    VideoPlayerController quesController = VideoPlayerController.network("http://$serverIP:$serverPort/downloadFile/$fileName");
+    VideoPlayerController quesController = VideoPlayerController.network(
+        "http://$serverIP:$serverPort/downloadFile/$fileName");
     Future<void> quesInit = quesController.initialize();
     print("initialised");
     // TODO future builder video player is not working in dialog
@@ -81,24 +83,24 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: FutureBuilder(
-                future: quesInit,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    // If the VideoPlayerController has finished initialization, use
-                    // the data it provides to limit the aspect ratio of the VideoPlayer.
-                    return AspectRatio(
-                      aspectRatio: 16 / 9,
-                      // Use the VideoPlayer widget to display the video.
-                      child: VideoPlayer(quesController),
-                    );
-                  } else {
-                    print("connection state is not connected");
-                    // If the VideoPlayerController is still initializing, show a
-                    // loading spinner.
-                    return Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
+              future: quesInit,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  // If the VideoPlayerController has finished initialization, use
+                  // the data it provides to limit the aspect ratio of the VideoPlayer.
+                  return AspectRatio(
+                    aspectRatio: 16 / 9,
+                    // Use the VideoPlayer widget to display the video.
+                    child: VideoPlayer(quesController),
+                  );
+                } else {
+                  print("connection state is not connected");
+                  // If the VideoPlayerController is still initializing, show a
+                  // loading spinner.
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
           );
         });
   }
@@ -122,13 +124,23 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
               key: UniqueKey()));
           for (int j = 1; j < list[i].length; j++) {
             print("$i $j");
-            Widget nameWidget = Text((names[i])[j]["Name"]);
+            Widget nameWidget = GestureDetector(
+              child: Text((names[i])[j]["Name"]),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ViewPage(email: names[i][j]["Email"])),
+                );
+              },
+            );
             VideoPlayerController _controller = VideoPlayerController.network(
                 "http://$serverIP:$serverPort/downloadAnswer/" +
                     list[i][j]
                         .substring(list[i][j].toString().lastIndexOf("/") + 1));
             Future<void> _initializeVideoPlayerFuture =
-                _controller.initialize().then((value){_controller.play();});
+                _controller.initialize().then((value) {
+              _controller.play();
+            });
 
             Widget vidPlayer = FutureBuilder(
               future: _initializeVideoPlayerFuture,
@@ -212,4 +224,7 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
           ),
         ));
   }
+}
+
+class ViewProfile {
 }

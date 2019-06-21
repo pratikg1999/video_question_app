@@ -54,7 +54,7 @@ class AskState extends State<Ask> {
                     onPressed: (){
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ViewPage()),
+                        MaterialPageRoute(builder: (context) => ViewPage(email: "prateek.pratik.gupta@gmail.com")),
                       );
                     },
                     child: new Text("Ask Question"),

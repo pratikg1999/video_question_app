@@ -13,6 +13,8 @@ import 'dart:convert';
 // import 'package:teacher/drawer.dart';
 
 class ViewPage extends StatefulWidget {
+  final String email;
+  ViewPage({this.email});
   ViewPageState createState() {
     return ViewPageState();
   }
@@ -40,7 +42,7 @@ class ViewPageState extends State<ViewPage> {
     var uri = new Uri.http("$serverIP:$serverPort", "/getProfileDetails");
     var request = new http.MultipartRequest("POST", uri);
 
-    request.fields["email"] = "henilj1999@gmail.com";
+    request.fields["email"] = widget.email;
     var response = await request.send();
     if(response.statusCode==200){
       var resData = await response.stream.bytesToString();
@@ -50,7 +52,7 @@ class ViewPageState extends State<ViewPage> {
       email = resDataJson["Email"];
       phone = resDataJson["Phone"];
       age = resDataJson["Age"];
-      interests = resDataJson["Interests"];
+      interests = resDataJson["Interests"].toString();
       profPic = resDataJson["ProfilePic"].toString();
       print(profPic+"----------------");
 //      if (resDataJson["ProfilePic"].toString() != "null") {
@@ -104,7 +106,7 @@ class ViewPageState extends State<ViewPage> {
            SizedBox(height: 20.0,),
            _buildSeparator(screenSize),
            _buildBio(context,screenSize),
-          SizedBox(height: 10.0),
+          SizedBox(height: 20.0),
           _buildSeparator(screenSize),
           SizedBox(height: 20.0,)
           ],
@@ -123,6 +125,7 @@ class ViewPageState extends State<ViewPage> {
   }
 
   Widget circularImage() {
+    print("prfile pic : $profPic");
     return Positioned(
       // width: 150.0,
       left: (MediaQuery.of(context).size.width - 150) / 2,
@@ -146,10 +149,7 @@ class ViewPageState extends State<ViewPage> {
                       : ColorFilter.mode(
                       Colors.black.withOpacity(0.2), BlendMode.dstATop),
                   fit: BoxFit.fill,
-                  image: profPic != "null"
-                      ?new NetworkImage(
-                      "http://$serverIP:$serverPort" + "/getProfilePic/$profPic")
-                      : new AssetImage("assets/images/View_pic.jpg"),
+                  image: (profPic != null && profPic != "null") ?new NetworkImage("http://$serverIP:$serverPort" + "/getProfilePic/${profPic.substring(profPic.lastIndexOf("/")+1)}") : new AssetImage("assets/images/View_pic.jpg"),
                 ),
               ),
               child: !uploading

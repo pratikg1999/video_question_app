@@ -167,6 +167,7 @@ class ProfilePageState extends State<ProfilePage> {
           ),
           Text(
             fullName,
+            textAlign: TextAlign.center,
             style: TextStyle(
                 fontFamily: "FiraSans",
                 fontWeight: FontWeight.bold,
