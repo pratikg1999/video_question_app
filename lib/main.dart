@@ -10,7 +10,10 @@ import 'answerToMyQuestion.dart';
 import 'package:teacher/NotUploadedQuestions.dart';
 import 'UploadedQuestions.dart';
 import 'storeJson.dart';
+import 'viewProfile.dart';
 void main() => runApp(MyApp());
+
+
 
 class MyApp extends StatelessWidget {
 
@@ -33,6 +36,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => ProfilePage(),
         '/questionsAsked': (context) => QuestionsAsked(),
         '/answersPage' : (context) => AnswersOfMyQuestion(),
+        '/view' : (context) => ViewPage(),
       },
       home: LoginPage(title: 'Video Question App'),
 

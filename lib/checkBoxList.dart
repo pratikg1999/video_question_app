@@ -131,7 +131,7 @@ class CheckBoxState extends State<CheckBox> {
           ]));
         });
     var uri = new Uri.http("$serverIP:$serverPort", "/signup");
-
+    print(uri.toString());
     var request = new http.MultipartRequest("POST", uri);
 
     Map<String, double> currentLocation = new Map();
@@ -150,7 +150,7 @@ class CheckBoxState extends State<CheckBox> {
       request.fields['interests[' + index.toString() + ']'] = l;
       index++;
     }
-
+    print(request.toString());
     print(request.fields.toString());
 
     var response = await request.send();

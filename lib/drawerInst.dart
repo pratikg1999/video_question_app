@@ -96,11 +96,11 @@ class DrawerState extends State<NavDrawer> {
                     Navigator.of(context).pushNamed('/profile');
                   },
                 )
-                // Text(
-                //   widget.userName.substring(0, 1).toUpperCase(),
-                //   style: TextStyle(fontWeight: FontWeight.bold),
-                // ),
-                ),
+              // Text(
+              //   widget.userName.substring(0, 1).toUpperCase(),
+              //   style: TextStyle(fontWeight: FontWeight.bold),
+              // ),
+            ),
             accountEmail: Text(email),
             accountName: Text(userName),
           ),
@@ -114,17 +114,9 @@ class DrawerState extends State<NavDrawer> {
               }
             //Navigator.of(context).pushNamed('/ask'),
           ),
+
           ListTile(
-              title: Text("My Uploaded questions"),
-              leading: Icon(Icons.card_membership),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/ask', (Route<dynamic> route) => false);
-                Navigator.of(context).pushNamed('/uploadedvideo');
-              }),
-              ListTile(
-              title: Text("My Not Uploaded questions"),
+              title: Text("Not Uploaded questions"),
               leading: Icon(Icons.card_membership),
               trailing: Icon(Icons.arrow_forward),
               onTap: () {
@@ -132,49 +124,25 @@ class DrawerState extends State<NavDrawer> {
                     '/ask', (Route<dynamic> route) => false);
                 Navigator.of(context).pushNamed('/questions');
               }),
-          isUser?
+          ListTile(
+              title: Text("Uploaded questions"),
+              leading: Icon(Icons.card_membership),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/ask', (Route<dynamic> route) => false);
+                Navigator.of(context).pushNamed('/uploadedvideo');
+              }),
           ListTile(
               title: Text("My answers"),
               leading: Icon(Icons.camera_roll),
               trailing: Icon(Icons.arrow_forward),
               onTap: () {
-                print(isUser);
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     '/ask', (Route<dynamic> route) => false);
                 Navigator.of(context).pushNamed('/answers');
-                 }):ListTile(),
+              }),
 
-              ListTile(
-              title: Text("Questions for me"),
-              leading: Icon(Icons.question_answer),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/questionsAsked', (Route<dynamic> route) => false);
-              }
-              
-            //Navigator.of(context).pushNamed('/ask'),
-          ),
-          ListTile(
-              title: Text("Answers To My Question"),
-              leading: Icon(Icons.question_answer),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/answersPage', (Route<dynamic> route) => false);
-              }
-            //Navigator.of(context).pushNamed('/ask'),
-          ),
-             
-          isUser?ListTile(
-              title: Text("My profile"),
-              leading: Icon(Icons.person),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: () {
-                // Navigator.of(context).pushNamedAndRemoveUntil(
-                //     '/ask', (Route<dynamic> route) => false);
-                Navigator.of(context).pushNamed('/profile');
-              }):ListTile(),
           ListTile(
             title: Text("Log out"),
             trailing: Icon(Icons.power_settings_new),
@@ -190,24 +158,24 @@ class DrawerState extends State<NavDrawer> {
                         child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                          AlertDialog(
-                            //decoration: BoxDecoration(color: Color.fromRGBO(30, 30, 30, 1)),
-                            content: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                CircularProgressIndicator(),
-                                Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      "Logging out",
+                              AlertDialog(
+                                //decoration: BoxDecoration(color: Color.fromRGBO(30, 30, 30, 1)),
+                                content: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    CircularProgressIndicator(),
+                                    Expanded(
+                                      child: Center(
+                                        child: Text(
+                                          "Logging out",
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        ]));
+                              ),
+                            ]));
                   });
 //              await Future.delayed(Duration(seconds: 3), (){print("after 3 seconds");}); // await is neccessary
               int statusCode = await logOut();

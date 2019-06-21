@@ -16,3 +16,4 @@ const String ERROR_USER_ALREADY_EXISTS = "User with this email already exists";
 // To store username and email used in Drawers (dont delete it)
 String USER_NAME;
 String EMAIL;
+bool isUser=true;
