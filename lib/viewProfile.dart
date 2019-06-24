@@ -24,8 +24,8 @@ class ViewPageState extends State<ViewPage> {
   // String _fullName = "fullname";
   String _status = "hey";
   String _bio = "programmer";
-  String _quesAnswered ;
-  String _quesAsked ;
+  String _quesAnswered ="0";
+  String _quesAsked  = "0";
   Image _image;
   File _tempImage;
   bool uploading = false;
@@ -76,7 +76,7 @@ class ViewPageState extends State<ViewPage> {
           "Accept": "application/json"
         }
     );
-    List<String>list = new List();
+    List list = new List();
     final map = jsonDecode(Response.body);
     setState(() {
       list = map;
