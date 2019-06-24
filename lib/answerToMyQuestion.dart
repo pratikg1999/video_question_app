@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:teacher/viewProfile.dart';
+import 'viewProfile.dart';
 import 'package:video_player/video_player.dart';
 import 'drawer.dart';
 import 'constants.dart';
@@ -9,7 +9,6 @@ import 'chewieListNetwork.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'shared_preferences_helpers.dart';
-import 'package:teacher/shared_preferences_helpers.dart';
 
 
 /// Page that shows answers to questions of currently logged-in user
@@ -35,8 +34,7 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
   /// 
   /// The details of each person is a [Map] with fields- **Name, email, profile-pic, age, phone, **.
   List<List<Map<String, dynamic>>> names = [];
-  String _name = USER_NAME;
-  String _email = EMAIL;
+
 
   /// Fetches the [list] of answers and corresponding [details] from the server
   /// 

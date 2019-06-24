@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:teacher/answer_video.dart';
+import 'answer_video.dart';
 import 'dart:core';
 import 'chewieListNetwork.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'shared_preferences_helpers.dart';
 import 'constants.dart';
-import 'package:teacher/shared_preferences_helpers.dart';
 import 'drawer.dart';
 
+
+/// Displays questions available for the user to answer depending on the user's interests.
 class QuestionsAsked extends StatefulWidget {
   @override
   QuestionsAskedState createState() {
@@ -16,10 +17,20 @@ class QuestionsAsked extends StatefulWidget {
   }
 }
 
+
+/// Establishes state with QuestionsAsked page.
 class QuestionsAskedState extends State<QuestionsAsked> {
+
+  /// Stores list of questions related to the user logged in from server.
   List list;
+
+  /// Stores name of user logged in.
   String _name = USER_NAME;
+
+  ///Stores email of user logged in.
   String _email = EMAIL;
+
+  /// Gets a list of all questions from the server for the current user.
   Future<void> setter() async {
     var token = await getCurrentTokenId();
     print(token);
@@ -42,6 +53,8 @@ class QuestionsAskedState extends State<QuestionsAsked> {
     setter();
   }
 
+
+  /// Uses the [list] to display the question videos as a ListView.
   List<Widget> getVideos() {
     List<Widget> listArray = List<Widget>();
     if (list != null) {

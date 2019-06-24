@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:teacher/LoginPage.dart';
-import 'package:teacher/constants.dart';
+import 'constants.dart';
 import 'shared_preferences_helpers.dart';
 
 

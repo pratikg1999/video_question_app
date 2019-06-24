@@ -7,7 +7,6 @@ import 'chewieListNetwork.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'shared_preferences_helpers.dart';
-import 'package:teacher/shared_preferences_helpers.dart';
 
 /// The page where the user can see all the answers that he answered.
 class Answers extends StatefulWidget {

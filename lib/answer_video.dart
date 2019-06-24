@@ -9,6 +9,8 @@ import 'package:teacher/shared_preferences_helpers.dart';
 import 'package:http/http.dart' as http;
 import 'constants.dart';
 
+
+/// Records answers to questions.
 class AnswerVideoRecorder extends StatefulWidget {
   final String questionName;
   AnswerVideoRecorder(this.questionName);
@@ -18,18 +20,33 @@ class AnswerVideoRecorder extends StatefulWidget {
   }
 }
 
+/// State associated with recording answers.
 class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
+
+  /// CameraController needed to control cameras of device.
   CameraController controller;
+  /// Stores the path of the answer video recorded.
   String videoPath;
+  /// Stores a list of the description of cameras available on the device.
   List<CameraDescription> cameras;
+  /// Used to represent the camera selected for recording.
   int selectedCameraIdx = 0;
+  /// Used to check if answer video is to be uploaded now or later.
   bool toUpload = true;
 
+  /// Used to name the new video recorded.
   String currentTime;
+  /// Stores the email of the current user.
   String email;
+  /// Stores the path where the video is to be saved.
   String videoDirectory;
+
+  /// Associates key with the scaffold to uniquely identify it.
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+
+  /// * [cameras] is initialised to contain the description of all cameras available on the device.
+  /// * [controller] is initialised to control the first camera in the list of cameras.
   Future<void> _setUpCameras() async {
     try {
       // initialize cameras.
@@ -97,6 +114,8 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
     );
   }
 
+
+  /// Display 'Loading' text  when camera is still loading.
   Widget _cameraPreviewWidget() {
     print("controller: $controller");
     print(controller?.value);
@@ -117,6 +136,8 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
     );
   }
 
+
+  /// Displays option to toggle between the front and the back camera.
   Widget _cameraTogglesRowWidget() {
     if (cameras == null) {
       print("cameras is null");
@@ -138,6 +159,7 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
     );
   }
 
+  /// Loads the appropriate icons.
   IconData _getCameraLensIcon(CameraLensDirection direction) {
     switch (direction) {
       case CameraLensDirection.back:
@@ -151,7 +173,7 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
     }
   }
 
-  /// Display the control bar with buttons to record videos.
+  /// Displays the control bar with buttons to record videos.
   Widget _captureControlRowWidget() {
     return Expanded(
       child: Align(
@@ -184,6 +206,8 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
     );
   }
 
+
+  /// Toggles between front and back video.
   void _onSwitchCamera() {
     selectedCameraIdx =
         selectedCameraIdx < cameras.length - 1 ? selectedCameraIdx + 1 : 0;
@@ -196,6 +220,7 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
     });
   }
 
+  /// Re-initialises the camera controller to associate with switched camera.
   Future<void> _onCameraSwitched(CameraDescription cameraDescription) async {
     if (controller != null) {
       await controller.dispose();
@@ -233,8 +258,9 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
     }
   }
 
-
-
+  /// Calls the [_startVideoRecording()] function.
+  ///
+  /// Displays toast error if any internal error occurs.
   void _onRecordButtonPressed() {
     _startVideoRecording().then((String filePath) {
       if (filePath != null) {
@@ -250,6 +276,7 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
     });
   }
 
+  /// Starts recording the video when record button is pressed.
   Future<String> _startVideoRecording() async {
     email = await getFromSP(EMAIL_KEY_SP);
     if (!controller.value.isInitialized) {
@@ -290,6 +317,8 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
     return filePath;
   }
 
+
+  /// Builds a custom toast error depending on the CameraException that is passed in as the parameter.
   void _showCameraException(CameraException e) {
     String errorText = 'Error: ${e.code}\nError Message: ${e.description}';
     print(errorText);
@@ -303,11 +332,15 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
         textColor: Colors.white);
   }
 
+  /// Calls the [_stopVideoRecording()] to stop video recording.
   void _onStopButtonPressed() async {
     await _stopVideoRecording();
 
   }
 
+  /// Stops recording of the video.
+  ///
+  /// Depending on the value of toUpload either the video gets uploaded or is saved locally.
    Future<void> _stopVideoRecording() async {
     if (!controller.value.isRecordingVideo) {
       return null;
@@ -330,9 +363,15 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
   }
 
 
+  /// Uploads the recorded answer video to the server.
+  ///
+  /// * [uri] is the path to which request has to be sent.
+  /// * [token] is the token of the current user logged in.
+  /// * [videoDirectory] is the directory path of the video to be uploaded.
+  /// * [request] is the http Multipart request sent to the server.
+  /// Depending on the response code received, appropriate toast is displayed.
   uploadAnswer(String filePath, String questionName) async {
-  print("uploading");
-  // var url = "$serverIP:$serverPort/uploadAnswer";
+
   var uri = new Uri.http('$serverIP:$serverPort', '/uploadAnswer');
 
   var token = await getCurrentTokenId();
@@ -340,17 +379,13 @@ class _AnswerVideoRecorderState extends State<AnswerVideoRecorder> {
   final String videoDirectory = '$filePath';
 
   var request = new http.MultipartRequest("POST", uri);
-  print("successfuly parse the url $uri");
 
   request.files.add( await http.MultipartFile.fromPath('video', videoDirectory, contentType: MediaType('video', 'mp4')));
   request.fields['tokenId'] = token;
   request.fields['questionName'] = questionName;
 
   request.send().then((response) {
-    print(response.statusCode);
-    print(response.toString());
     if (response.statusCode == 200){
-      print("Uploaded!");
         Fluttertoast.showToast(
         msg: 'Successfully uploaded',
         toastLength: Toast.LENGTH_SHORT,

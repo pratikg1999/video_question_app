@@ -7,9 +7,9 @@ import 'package:path/path.dart' hide context;
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'package:teacher/SignUpPage.dart';
-import 'package:teacher/shared_preferences_helpers.dart';
+import 'shared_preferences_helpers.dart';
 import 'package:http/http.dart' as http;
-import 'package:teacher/constants.dart';
+import 'constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'Institute.dart';
 
