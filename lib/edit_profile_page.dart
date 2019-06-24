@@ -12,36 +12,58 @@ import 'package:http/http.dart' as http;
 // import 'package:teacher/drawer.dart';
 import 'dart:convert';
 
+
+///Builds the EditProfilePage.
 class ProfilePage extends StatefulWidget {
   ProfilePageState createState() {
     return ProfilePageState();
   }
 }
 
+///Builds the state associated with EditProfilePage.
 class ProfilePageState extends State<ProfilePage> {
-  // String _fullName = "fullname";
-  String _status = "hey";
-  String _bio = "programmer";
+  ///Number of questions answered by the user.
   String _quesAnswered = "1";
+
+  ///Number of questions asked by the user.
   String _quesAsked = "1";
+
+  ///Stores the image if it is uploaded.
   File _image;
+
+  ///If upload fails it stores previous profile pic.
   File _tempImage;
+
+  ///Status of upload is stored in it.
   bool uploading = false;
+
   final formkey = GlobalKey<FormState>();
 
+  ///Previous user_name set by the user.
   String fullName = USER_NAME;
+  ///Previous age set by the user.
   String age;
+  ///Previous phone number set by the user.
   String phone;
 
+  ///Stores updated user_name.
   String _name;
+  ///Stores updated age.
   int _age;
+  ///Stores updated phone number.
   String _phone;
 
   var nameController = TextEditingController();
   var ageController = TextEditingController();
   var phoneController = TextEditingController();
+
+  ///Fetches the earlier info of user
+  ///
+  ///Sets the value of controllers for
+  ///*name
+  ///*age
+  ///*phone.
   void getInfo() async {
-    // _fullName = await getFromSP(USER_NAME_SP);
     age = await getFromSP(AGE_KEY_SP);
     print("age id: $age");
     phone = await getFromSP(PHONE_KEY_SP);
@@ -80,6 +102,7 @@ class ProfilePageState extends State<ProfilePage> {
     setState(() {});
   }
 
+  ///Initializes info and profile pic.
   @override
   void initState() {
     initProfilePicFile();
@@ -87,20 +110,28 @@ class ProfilePageState extends State<ProfilePage> {
     super.initState();
   }
 
+  ///Fetches image from gallery
+  ///
+  /// Images selected by user from gallery
+  /// is returned.
   Future<File> getImageFromGallery() async {
     File image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    // _tempImage = _image;
-    // _image = image;
     return image;
   }
 
+  ///Captures image using camera
+  ///
+  /// Image captured by camera at present state is returned.
   Future<File> getImageFromCamera() async {
     File image = await ImagePicker.pickImage(source: ImageSource.camera);
-    // _tempImage = _image;
-    // _image = image;
     return image;
   }
 
+  ///Previous profile pic is replaced with selected newImage
+  ///
+  ///Message is displayed showing the status of upload
+  ///Due to network issues if error is encountered then previous profile
+  ///image gets restored.
   Future changeProfilePic(File newImage) async {
     if (newImage != null) {
       setState(() {
@@ -110,21 +141,13 @@ class ProfilePageState extends State<ProfilePage> {
       });
       int responseCode = await uploadProfilePic(newImage);
       if (responseCode == 200) {
-        // PermissionStatus per = await SimplePermissions.requestPermission(Permission.ReadExternalStorage);
-        // print(per);
         String path = (await getApplicationDocumentsDirectory()).path;
         print("copying to $path/profile_pic.png");
         File pFile = File('$path/profile_pic.png');
-        // pFile.deleteSync();
-        // pFile.writeAsBytesSync((await http.get(Uri.http("$serverIP:$serverPort", "/getProfilePic/5cfe0b06e0efcb356ff5d63f.octet-stream"))).bodyBytes);
-        // File copyFile = newImage.copySync('$path/profile_pic.png');//.then((val){print("copy: $val");}).catchError((e){print(e);});
         pFile.writeAsBytesSync(newImage.readAsBytesSync());
         FileImage im = FileImage(pFile);
         im.evict();
         print("copying completed");
-        // showDialog(context:ctx, builder: (BuildContext context){
-        //   return AlertDialog(content: Image.file(File('$path/profile_pic.png')),);
-        // });
         setState(() {
           _image = File("$path/profile_pic.png");
           uploading = false;
@@ -146,6 +169,10 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  ///Updates uploaded profile page in database
+  ///
+  /// Respective status code is returned based on
+  /// the upload being successfull or not.
   Future<int> uploadProfilePic(File newImage) async {
     var url = "$serverIP:$serverPort/uploadFile";
     var uri = new Uri.http('$serverIP:$serverPort', '/uploadProfilePic');
@@ -169,13 +196,19 @@ class ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     ctx = context;
     return Scaffold(
-        // drawer: NavDrawer(email: EMAIL, userName: USER_NAME),
         appBar: AppBar(
           title: Text("Profile"),
         ),
         body: profilePageBody());
   }
 
+  ///Inputs are taken if user wishes to edit the page
+  ///
+  /// Previous details o user are displayed by default and new information
+  /// gets stored in variables for
+  /// *name
+  /// *age
+  /// *phone.
   Widget profilePageBody() {
     Size screenSize = MediaQuery.of(context).size;
     return SingleChildScrollView(
@@ -193,14 +226,7 @@ class ProfilePageState extends State<ProfilePage> {
                 fontWeight: FontWeight.bold,
                 fontSize: 30.0),
           ),
-          // _buildStatus(context),
           _buildStatContainer(),
-          // _buildBio(context),
-          // _buildSeparator(screenSize),
-          // SizedBox(height: 300.0),
-          // _buildGetInTouch(context),
-          // SizedBox(height: 80.0),
-          // _buildButtons(),
           SizedBox(height: 20.0),
           Padding(
               padding: EdgeInsets.all(8.0),
@@ -241,7 +267,7 @@ class ProfilePageState extends State<ProfilePage> {
                       controller: ageController,
                       keyboardType: TextInputType.number,
                       decoration:
-                          InputDecoration(labelText: "Age: ", hintText: "__"),
+                      InputDecoration(labelText: "Age: ", hintText: "__"),
                       onSaved: (input) => _age = int.parse(input),
                     ),
                     SizedBox(
@@ -258,30 +284,7 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Widget _buildTextField(String label, String hintText) {
-  //   return Row(
-  //     children: <Widget>[
-  //       Text(label + ": "),
-  //       TextField(
-  //         controller: textControllers[label],
-  //         decoration: new InputDecoration(
-  //           border: new OutlineInputBorder(
-  //             borderRadius: const BorderRadius.all(
-  //               const Radius.circular(15.0),
-  //             ),
-  //           ),
-  //           filled: true,
-  //           hintStyle: new TextStyle(color: Colors.grey[800]),
-  //           hintText: hintText,
-  //           labelText: label,
-  //           fillColor: Colors.white70,
-  //         ),
-  //       ),
-  //     ],
-  //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //   );
-  // }
-
+  ///Button to call saveChanges function on tap.
   Widget saveButton() {
     return Container(
       height: 30.0,
@@ -303,6 +306,7 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  ///Creates a stack that displays profile image above the background image.
   Widget header() {
     return Stack(
       children: <Widget>[
@@ -312,11 +316,13 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  ///Sets previous profile in circular manner
+  ///
+  /// Icon is placed above profile pic to allow editing.
+  /// If editing is done then selected image is set as profile pic.
   Widget circularImage() {
     return Positioned(
-      // width: 150.0,
       left: (MediaQuery.of(context).size.width - 150) / 2,
-      // right: 25.0,
       top: MediaQuery.of(context).size.height / 6,
       child: Stack(
         children: <Widget>[
@@ -335,7 +341,7 @@ class ProfilePageState extends State<ProfilePage> {
                   colorFilter: !uploading
                       ? null
                       : ColorFilter.mode(
-                          Colors.black.withOpacity(0.2), BlendMode.dstATop),
+                      Colors.black.withOpacity(0.2), BlendMode.dstATop),
                   fit: BoxFit.fill,
                   image: _image != null
                       ? FileImage(_image)
@@ -376,7 +382,6 @@ class ProfilePageState extends State<ProfilePage> {
                               children: <Widget>[
                                 FlatButton.icon(
                                   color: Colors.white.withOpacity(0.1),
-                                  // shape: CircleBorder(side: BorderSide()),
                                   icon: Icon(Icons.add_a_photo),
                                   label: Text("Choose from gallery"),
                                   onPressed: () async {
@@ -386,7 +391,6 @@ class ProfilePageState extends State<ProfilePage> {
                                   },
                                 ),
                                 FlatButton.icon(
-                                  // shape: CircleBorder(side: BorderSide()),
                                   icon: Icon(Icons.wallpaper),
                                   label: Text("Choose from camera"),
                                   onPressed: () async {
@@ -409,6 +413,7 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  ///Image is set behind the profile picture.
   Widget bottomMostWidget() {
     return Column(
       mainAxisSize: MainAxisSize.max,
@@ -425,24 +430,12 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Widget _buildStatus(BuildContext context) {
-  //   return Container(
-  //     padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
-  //     decoration: BoxDecoration(
-  //       color: Theme.of(context).scaffoldBackgroundColor,
-  //       borderRadius: BorderRadius.circular(4.0),
-  //     ),
-  //     child: Text(
-  //       _status,
-  //       style: TextStyle(
-  //         color: Colors.black,
-  //         fontSize: 20.0,
-  //         fontWeight: FontWeight.w300,
-  //       ),
-  //     ),
-  //   );
-  // }
 
+  ///Statistics are set here
+  ///
+  /// It includes
+  /// **Number of questions answered by the user
+  /// **Number of questions asked by the user.
   Widget _buildStatItem(String label, String count) {
     TextStyle _statLabelTextStyle = TextStyle(
       color: Colors.black,
@@ -481,6 +474,10 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
+
+  ///Both statistics are placed adjacent to each other in this widget
+  ///
+  /// That is questions asked and answered.
   Widget _buildStatContainer() {
     return Container(
       height: 60.0,
@@ -498,24 +495,7 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Widget _buildBio(BuildContext context) {
-  //   TextStyle _bioTextStyle = TextStyle(
-  //     fontWeight: FontWeight.w500,
-  //     fontSize: 16.0,
-  //     fontStyle: FontStyle.italic,
-  //     color: Color(0xFF799497),
-  //   );
-  //   return Container(
-  //     color: Theme.of(context).scaffoldBackgroundColor,
-  //     padding: EdgeInsets.all(8.0),
-  //     child: Text(
-  //       _bio,
-  //       textAlign: TextAlign.center,
-  //       style: _bioTextStyle,
-  //     ),
-  //   );
-  // }
-
+  ///Black single line separator is generated.
   Widget _buildSeparator(Size screenSize) {
     return Container(
       width: screenSize.width / 1.6,
@@ -525,69 +505,10 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Widget _buildGetInTouch(BuildContext context) {
-  //   return Container(
-  //     color: Theme.of(context).scaffoldBackgroundColor,
-  //     padding: EdgeInsets.only(top: 8.0),
-  //     child: Text(
-  //       "Get in touch with ${fullName.split(" ")[0]}",
-  //       style: TextStyle(fontSize: 16.0),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildButtons() {
-  //   return Padding(
-  //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-  //     child: Row(
-  //       children: <Widget>[
-  //         Expanded(
-  //           child: InkWell(
-  //             onTap: () => print("Asked"),
-  //             child: Container(
-  //               height: 40.0,
-  //               decoration: BoxDecoration(
-  //                 border: Border.all(),
-  //                 color: Color(0xFF404A5C),
-  //               ),
-  //               child: Center(
-  //                 child: Text(
-  //                   "ASK",
-  //                   style: TextStyle(
-  //                     color: Colors.white,
-  //                     fontWeight: FontWeight.w600,
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //         SizedBox(width: 10.0),
-  //         Expanded(
-  //           child: InkWell(
-  //             onTap: () => print("Message"),
-  //             child: Container(
-  //               height: 40.0,
-  //               decoration: BoxDecoration(
-  //                 border: Border.all(),
-  //               ),
-  //               child: Center(
-  //                 child: Padding(
-  //                   padding: EdgeInsets.all(10.0),
-  //                   child: Text(
-  //                     "Message",
-  //                     style: TextStyle(fontWeight: FontWeight.w600),
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
+  ///Changed information is updated in:
+  ///
+  ///*Shared Preferences
+  ///*Database.
   void saveChanges() async {
     if(formkey.currentState.validate()){
 
@@ -646,7 +567,9 @@ class ProfilePageState extends State<ProfilePage> {
   }
 }
 
+
 class GetClipper extends CustomClipper<Path> {
+  ///Clipper is created that partitions the background behind profile page.
   @override
   Path getClip(Size size) {
     Path path = new Path();

@@ -12,6 +12,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 // import 'package:teacher/drawer.dart';
 
+
+///Builds the viewProfilePage.
 class ViewPage extends StatefulWidget {
   final String email;
   ViewPage({this.email});
@@ -20,24 +22,41 @@ class ViewPage extends StatefulWidget {
   }
 }
 
+///Builds the state associated with viewProfilePage.
 class ViewPageState extends State<ViewPage> {
-  // String _fullName = "fullname";
-  String _status = "hey";
-  String _bio = "programmer";
-  String _quesAnswered ="0";
-  String _quesAsked  = "0";
-  Image _image;
-  File _tempImage;
+
+  ///Number of questions answered by the user.
+  String _quesAnswered = "12";
+
+  ///Number of questions asked by the user.
+  String _quesAsked = "10";
+
+  ///Status of upload is stored in it.
   bool uploading = false;
-  //final formkey = GlobalKey<FormState>();
+
   String profPic;
+  ///Stores details of the user whose profile pic is  to viewed
+  ///
+  /// *Name
+  /// *Age
+  /// *Phone
+  /// *e-mail
+  /// *Interests.
   String fullName;
   String age;
   String phone;
   String email;
   String interests;
 
-
+  ///Fetches the info of user whose profile is to be viewed
+  ///
+  ///Sets the value of controllers for
+  ///*name
+  ///*age
+  ///*phone
+  ///*email
+  ///*interests
+  ///*profilePic.
   void getInfo() async {
     print("ENTERED GETINFO");
     var uri = new Uri.http("$serverIP:$serverPort", "/getProfileDetails");
@@ -89,8 +108,7 @@ class ViewPageState extends State<ViewPage> {
 
   @override
   void initState() {
-//    initViewPicFile();
-     getInfo();
+    getInfo();
     super.initState();
   }
 
@@ -106,6 +124,8 @@ class ViewPageState extends State<ViewPage> {
         body: ViewPageBody());
   }
 
+  ///All the widgets are assembled in order
+  ///to display bio and statistics.
   Widget ViewPageBody() {
     Size screenSize = MediaQuery.of(context).size;
     return SingleChildScrollView(
@@ -123,18 +143,18 @@ class ViewPageState extends State<ViewPage> {
                 fontSize: 30.0),
           ),
           _buildStatContainer(),
-           SizedBox(height: 20.0,),
-           _buildSeparator(screenSize),
-           _buildBio(context,screenSize),
+          SizedBox(height: 20.0,),
+          _buildSeparator(screenSize),
+          _buildBio(context,screenSize),
           SizedBox(height: 20.0),
           _buildSeparator(screenSize),
           SizedBox(height: 20.0,)
-          ],
+        ],
       ),
     );
   }
 
-
+  ///Creates a stack that displays profile image above the background image.
   Widget header() {
     return Stack(
       children: <Widget>[
@@ -144,6 +164,10 @@ class ViewPageState extends State<ViewPage> {
     );
   }
 
+  ///Sets profile in circular manner
+  ///
+  /// Icon is placed above profile pic to allow editing.
+  /// If editing is done then selected image is set as profile pic.
   Widget circularImage() {
     print("prfile pic : $profPic");
     return Positioned(
@@ -169,7 +193,7 @@ class ViewPageState extends State<ViewPage> {
                       : ColorFilter.mode(
                       Colors.black.withOpacity(0.2), BlendMode.dstATop),
                   fit: BoxFit.fill,
-                  image: (profPic != null && profPic != "null") ?new NetworkImage("http://$serverIP:$serverPort" + "/getProfilePic/${profPic.substring(profPic.lastIndexOf("/")+1)}") : new AssetImage("assets/images/View_pic.jpg"),
+                  image: (profPic != null && profPic != "null") ?new NetworkImage("http://$serverIP:$serverPort" + "/getProfilePic/${profPic.substring(profPic.lastIndexOf("/")+1)}") : new AssetImage("assets/images/profile_pic.png"),
                 ),
               ),
               child: !uploading
@@ -195,6 +219,7 @@ class ViewPageState extends State<ViewPage> {
     );
   }
 
+  ///Image is set behind the profile picture.
   Widget bottomMostWidget() {
     return Column(
       mainAxisSize: MainAxisSize.max,
@@ -212,6 +237,11 @@ class ViewPageState extends State<ViewPage> {
   }
 
 
+  ///Statistics are set here
+  ///
+  /// It includes
+  /// **Number of questions answered by the user.
+  /// **Number of questions asked by the user.
   Widget _buildStatItem(String label, String count) {
     TextStyle _statLabelTextStyle = TextStyle(
       color: Colors.black,
@@ -250,6 +280,9 @@ class ViewPageState extends State<ViewPage> {
     );
   }
 
+  ///Both statistics are placed adjacent to each other in this widget
+  ///
+  /// That is questions asked and answered.
   Widget _buildStatContainer() {
     return Container(
       height: 60.0,
@@ -267,6 +300,8 @@ class ViewPageState extends State<ViewPage> {
     );
   }
 
+  ///Details of the user whose profile is to be viewed are
+  ///are structured.
   Widget _buildBio(BuildContext context, Size screenSize) {
     TextStyle _bioTextStyle = TextStyle(
       fontWeight: FontWeight.w500,
@@ -331,6 +366,7 @@ class ViewPageState extends State<ViewPage> {
   }
 
 
+  ///Black single line separator is generated.
   Widget _buildSeparator(Size screenSize) {
     return Container(
       width: screenSize.width / 1.6,
@@ -343,6 +379,7 @@ class ViewPageState extends State<ViewPage> {
 }
 
 class GetClipper extends CustomClipper<Path> {
+  ///Clipper is created that partitions the background behind profile page.
   @override
   Path getClip(Size size) {
     Path path = new Path();
