@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:teacher/viewProfile.dart';
+import 'viewProfile.dart';
 import 'package:video_player/video_player.dart';
 import 'drawer.dart';
 import 'constants.dart';
@@ -9,8 +9,8 @@ import 'chewieListNetwork.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'shared_preferences_helpers.dart';
-import 'package:teacher/shared_preferences_helpers.dart';
 
+/// Displays answers to the questions asked by the user logged in.
 class AnswersOfMyQuestion extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -19,10 +19,13 @@ class AnswersOfMyQuestion extends StatefulWidget {
 }
 
 class AnswersOfMyQuestionState extends State<StatefulWidget> {
+
+  /// Stores list of answers to questions asked by the current user.
   List list;
+
+  ///Stores
   List<List<Map<String, dynamic>>> names = [];
-  String _name = USER_NAME;
-  String _email = EMAIL;
+
 
   Future<void> setter() async {
     var token = await getCurrentTokenId();
@@ -211,10 +214,7 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
 
   Widget build(BuildContext context) {
     return new Scaffold(
-        drawer: NavDrawer(
-          email: EMAIL,
-          userName: USER_NAME,
-        ),
+        drawer: NavDrawer(),
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),

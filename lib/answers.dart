@@ -7,7 +7,6 @@ import 'chewieListNetwork.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'shared_preferences_helpers.dart';
-import 'package:teacher/shared_preferences_helpers.dart';
 
 class Answers extends StatefulWidget {
   @override
@@ -70,10 +69,7 @@ class AnswersState extends State<StatefulWidget> {
 
   Widget build(BuildContext context) {
     return new Scaffold(
-      drawer: NavDrawer(
-        email: EMAIL,
-        userName: USER_NAME,
-      ),
+      drawer: NavDrawer(),
       appBar: new AppBar(
         title: new Text("Video Question App"),
       ),

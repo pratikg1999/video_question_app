@@ -72,7 +72,7 @@ class UploadedQuestionsState extends State<StatefulWidget>{
 //    setter();
     return new Scaffold(
 
-        drawer: NavDrawer(userName: USER_NAME, email: EMAIL,),
+        drawer: NavDrawer(),
 
         appBar: new AppBar(
              title: new Text("Video Question App"),

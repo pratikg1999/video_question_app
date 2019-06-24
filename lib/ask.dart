@@ -5,7 +5,7 @@ import 'package:teacher/drawer.dart';
 import 'constants.dart';
 import 'viewProfile.dart';
 
-
+/// Builds the Ask page.
 class Ask extends StatefulWidget {
 
   @override
@@ -14,9 +14,18 @@ class Ask extends StatefulWidget {
   }
 }
 
+
+/// Builds the state associated with the Ask page.
 class AskState extends State<Ask> {
+
+  ///[_name] used to set the name in the drawer.
   String _name;
+
+  ///[_email] used to set the email in the drawer.
   String _email;
+
+
+  /// Retrieves the name and email of current user from shared preferences.
   void getNameAndEmail() async {
     _email = EMAIL;
     _name = await getFromSP(USER_NAME_SP);
@@ -39,7 +48,7 @@ class AskState extends State<Ask> {
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),
-        drawer : NavDrawer(userName:_name,email:_email),
+        drawer : NavDrawer(),
         body: new Center(
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.center,
