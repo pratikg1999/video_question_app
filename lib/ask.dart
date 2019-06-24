@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:teacher/shared_preferences_helpers.dart';
 import 'package:teacher/video.dart';
+import 'package:teacher/drawer.dart';
+import 'constants.dart';
 
 class Ask extends StatefulWidget {
 
@@ -10,12 +13,31 @@ class Ask extends StatefulWidget {
 }
 
 class AskState extends State<Ask> {
+  String _name;
+  String _email;
+  void getNameAndEmail() async {
+    _email = EMAIL;
+    _name = await getFromSP(USER_NAME_SP);
+    setState(() {
+
+    });
+  }
+
+
+  @override
+  void initState() {
+    getNameAndEmail();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("Raised Button"),
+          title: new Text("Video Question App"),
         ),
+        drawer : NavDrawer(userName:_name,email:_email),
         body: new Center(
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -42,4 +64,6 @@ class AskState extends State<Ask> {
           ),
         ));
   }
+
+
 }

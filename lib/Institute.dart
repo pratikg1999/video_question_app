@@ -1,31 +1,36 @@
 import 'package:flutter/material.dart';
-import 'checkBoxList.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:http/http.dart' as http;
+import 'constants.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:convert';
 
-class SignUp extends StatefulWidget {
+class Institute extends StatefulWidget{
   @override
-  State<StatefulWidget> createState() {
-    return new SignUpState();
+  State<Institute> createState() {
+    return InstituteState();
   }
 }
 
-class SignUpState extends State<SignUp> {
-  final GlobalKey<ScaffoldState> _signupScaffoldKey = new GlobalKey();
-  // final bloc = Bloc();
-  final formkey = GlobalKey<FormState>();
-  String _email, _password, _name;
-  final _passwordConroller = TextEditingController();
-  // final _verifyPasswordController = TextEditingController();
-  int _age;
+class InstituteState extends State<Institute>{
+
+  String _name;
+  String _address;
   String _phone;
+  String _password;
+  final _passwordConroller = TextEditingController();
   bool _emailValid;
+  String _email;
+  final formkey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _signupScaffoldKey = new GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        key: _signupScaffoldKey,
         appBar: AppBar(
           title: new Text('Sign Up'),
         ),
-        key: _signupScaffoldKey,
         body: Builder(
           // Create an inner BuildContext so that the onPressed methods
           // can refer to the Scaffold with Scaffold.of().
@@ -40,33 +45,20 @@ class SignUpState extends State<SignUp> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               TextFormField(
-                                decoration: InputDecoration(labelText: 'Name:'),
+                                decoration: InputDecoration(labelText: 'Name Of Institute:'),
                                 validator: (input) {
-                                  if (input.length < 3) {
-                                    return 'Name must contain atleast three letters';
-                                  } else {
-                                    return null;
-                                  }
+
                                 },
                                 onSaved: (input) => _name = input,
                               ),
                               TextFormField(
+                                minLines: 1,
+                                maxLines: 10,
                                 decoration: InputDecoration(
-                                    labelText: 'Phone:', hintText: "12xxxx78"),
-                                keyboardType: TextInputType.number,
+                                  labelText: 'Address',),
                                 validator: (input) {
-                                  if (input.length < 10) {
-                                    return 'Phone number is invalid';
-                                  } else {
-                                    return null;
-                                  }
                                 },
-                                onSaved: (input) => _phone = input,
-                              ),
-                              TextFormField(
-                                decoration: InputDecoration(labelText: 'Age:'),
-                                keyboardType: TextInputType.number,
-                                onSaved: (input) => _age = int.parse(input),
+                                onSaved: (input) => _address = input,
                               ),
                               TextFormField(
                                 decoration: InputDecoration(
@@ -84,6 +76,13 @@ class SignUpState extends State<SignUp> {
                                   }
                                 },
                                 onSaved: (input) => _email = input,
+                              ),
+                              TextFormField(
+                                decoration: InputDecoration(labelText: 'Phone:',
+                                    hintText: "12xxxx78"
+                                ),
+                                keyboardType: TextInputType.number,
+                                onSaved: (input) => _phone = input,
                               ),
                               TextFormField(
                                 controller: _passwordConroller,
@@ -116,7 +115,8 @@ class SignUpState extends State<SignUp> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: RaisedButton(
                                       onPressed: () async {
-                                        addStudent();
+                                        await addInstitute();
+
                                       },
                                       child: Text('Submit'),
                                     ),
@@ -130,26 +130,75 @@ class SignUpState extends State<SignUp> {
             }));
   }
 
-  void addStudent() async {
-    if (formkey.currentState.validate()) {
-      formkey.currentState.save();
+  addInstitute() async{
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                AlertDialog(
+                  //decoration: BoxDecoration(color: Color.fromRGBO(30, 30, 30, 1)),
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            "Creating new user",
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ]));
+        });
+    formkey.currentState.save();
+    var uri = new Uri.http("$serverIP:$serverPort", "/institute/create");
+    var request = new http.MultipartRequest("POST", uri);
+    request.fields["name"] = _name;
+    request.fields["phone"] = _phone;
+    request.fields["email"] = _email;
+    request.fields["address"] = _address;
+    request.fields["password"] = _password;
 
-      Navigator.push(context, MaterialPageRoute(builder: (context){
-        return CheckBox(
-            name: _name,
-            phone: _phone,
-            age:_age,
-            email:_email,
-            password:_password
-
-        );
-      }));
-
+    var response = await request.send();
+    print(response.toString());
+    if (response.statusCode == 200) {
+      print("Registered");
+      Navigator.pop(context);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+      Fluttertoast.showToast(
+        msg: 'Verification link has been sent',
+        toastLength: Toast.LENGTH_SHORT,
+      );
 
     } else {
-      _signupScaffoldKey.currentState.showSnackBar(
-          new SnackBar(content: Text("Unable to create user..try again")));
-      print("INVALID");
+      Navigator.pop(context);
+      print("hhhhhhhhhhhhhhhhhhhhhhhh");
+
+      var error = await response.stream.bytesToString();
+      print(error);
+      var errorJson = jsonDecode(error.toString());
+      switch (errorJson["message"]) {
+        case ERROR_USER_ALREADY_EXISTS:
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                    title: Text("Signup failed"),
+                    content: Text("User with this email already exists"));
+              });
+          break;
+        default:
+          _signupScaffoldKey.currentState.showSnackBar(
+              SnackBar(content: Text("Some error occured..try again")));
+      }
     }
+
   }
 }
