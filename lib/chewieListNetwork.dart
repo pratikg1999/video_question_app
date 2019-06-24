@@ -50,12 +50,12 @@ class ChewieListItemNetState extends State<ChewieListItemNet>{
     );
   }
 
-  @override
-  void deactivate() {
-    videoPlayerController.dispose();
-    _chewieController.dispose();
-    super.deactivate();
-  }
+  // @override
+  // void deactivate() {
+  //   videoPlayerController.dispose();
+  //   _chewieController.dispose();
+  //   super.deactivate();
+  // }
   @override
   void dispose() {
     videoPlayerController.dispose();
