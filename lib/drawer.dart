@@ -153,7 +153,8 @@ class DrawerState extends State<NavDrawer> {
                     '/ask', (Route<dynamic> route) => false);
                 Navigator.of(context).pushNamed('/answers');
               }):ListTile(),
-          isUser?ListTile(
+          isUser?
+          ListTile(
               title: Text("My profile"),
               leading: Icon(Icons.person),
               trailing: Icon(Icons.arrow_forward),

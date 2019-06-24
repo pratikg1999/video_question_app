@@ -22,8 +22,8 @@ class ViewPageState extends State<ViewPage> {
   // String _fullName = "fullname";
   String _status = "hey";
   String _bio = "programmer";
-  String _quesAnswered = "12";
-  String _quesAsked = "10";
+  String _quesAnswered ;
+  String _quesAsked ;
   Image _image;
   File _tempImage;
   bool uploading = false;
@@ -34,6 +34,7 @@ class ViewPageState extends State<ViewPage> {
   String phone;
   String email;
   String interests;
+
 
   void getInfo() async {
     print("ENTERED GETINFO");
@@ -62,6 +63,25 @@ class ViewPageState extends State<ViewPage> {
     }else{
       print("SOME ERROR OCCURED");
     }
+
+
+    var token = await getCurrentTokenId();
+    print(token);
+
+    var Response = await http.get(
+        Uri.encodeFull("http://"+serverIP+":"+serverPort+"/getQuestionsInfo?tokenId=$token"),
+        headers:{
+          "Accept": "application/json"
+        }
+    );
+    List<String>list = new List();
+    final map = jsonDecode(Response.body);
+    setState(() {
+      list = map;
+      _quesAsked = list[0];
+      _quesAnswered = list[1];
+      print(list.toString());
+    });
 
   }
 
