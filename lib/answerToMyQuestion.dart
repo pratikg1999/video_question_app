@@ -225,6 +225,3 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
         ));
   }
 }
-
-class ViewProfile {
-}

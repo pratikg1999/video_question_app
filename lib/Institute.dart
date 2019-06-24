@@ -4,6 +4,7 @@ import 'constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 
+/// The signUp page for a new institute.
 class Institute extends StatefulWidget{
   @override
   State<Institute> createState() {
@@ -11,16 +12,26 @@ class Institute extends StatefulWidget{
   }
 }
 
+/// Builds the state associated to [Institute].
 class InstituteState extends State<Institute>{
 
+  /// The name of the institute.
   String _name;
+  /// The address of the institute.
   String _address;
+  /// The phone of the institute.
   String _phone;
+  /// The password of the institute.
   String _password;
+  /// The [TextEditingController] for the password text field.
   final _passwordConroller = TextEditingController();
+  /// To check whether the entered email is valid or not.
   bool _emailValid;
+  /// The email of the institute.
   String _email;
+  /// Associate a key with the form to uniquely identify it.
   final formkey = GlobalKey<FormState>();
+  /// Associate a key with the scaffold to uniquely identify it.
   final GlobalKey<ScaffoldState> _signupScaffoldKey = new GlobalKey();
 
   @override
@@ -129,7 +140,12 @@ class InstituteState extends State<Institute>{
             }));
   }
 
- addInstitute() async{
+  /// Save the information of the institute on the server.
+  ///
+  /// * uri is request path to the server.
+  /// * request defines the type(POST in this case) of the multipart request to the uri.
+  /// * response stores the response of the http request.
+  addInstitute() async{
    showDialog(
        barrierDismissible: false,
        context: context,
@@ -165,9 +181,7 @@ class InstituteState extends State<Institute>{
     request.fields["password"] = _password;
 
     var response = await request.send();
-    print(response.toString());
     if (response.statusCode == 200) {
-      print("Registered");
       Navigator.pop(context);
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
@@ -178,10 +192,8 @@ class InstituteState extends State<Institute>{
 
     } else {
       Navigator.pop(context);
-      print("hhhhhhhhhhhhhhhhhhhhhhhh");
 
       var error = await response.stream.bytesToString();
-      print(error);
       var errorJson = jsonDecode(error.toString());
       switch (errorJson["message"]) {
         case ERROR_USER_ALREADY_EXISTS:

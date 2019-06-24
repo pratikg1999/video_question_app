@@ -10,7 +10,7 @@ import 'storeJson.dart';
 import 'dart:async';
 import 'shared_preferences_helpers.dart';
 
-
+/// The page where the user can see all his not uploaded questions.
 class Questions extends StatefulWidget{
   @override
   QuestionsState createState() {
@@ -18,13 +18,25 @@ class Questions extends StatefulWidget{
   }
 }
 
+/// Builds the state associated with [Questions]
 class QuestionsState extends State<Questions>{
 
-  Directory appDirectory,videoDirectory;
+  /// The location of the app in the mobile.
+  Directory appDirectory;
+  /// The location of the place where videos are stored in the mobile.
+  Directory videoDirectory;
+  /// The path of the directory where the videos are stored.
   String videoDirectoryPath;
+  /// The list of names of the not uploaded questions.
   List<String> list = [];
+  /// The email of the current logged in user.
   String email;
 
+  /// Sets the initial values for the state variables.
+  ///
+  /// * [getFromSP()] returns the email of the current user.
+  /// * [getExternalStorageDirectory()] returns the directory of the application.
+  /// * Timer triggers the action after certain period of time.
   void setter () async {
     email = await getFromSP(EMAIL_KEY_SP);
     appDirectory = await getExternalStorageDirectory();
@@ -33,9 +45,6 @@ class QuestionsState extends State<Questions>{
     videoDirectory = Directory.fromUri(Uri.file(videoDirectoryPath));
     List<String> l = List<String>();
     l = await getNotUploaded(email);
-//    setState(() {
-//      list = l;
-//    });
     Timer(Duration(seconds: 1),(){
       setState(() {
         list = l;
@@ -50,17 +59,21 @@ class QuestionsState extends State<Questions>{
   }
   String data = "fetching";
 
+
+  /// To upload the not uploaded question.
+  ///
+  /// [renameSync()] method is used to rename the file.
+  /// [uploadFile()] method actually uploads the question to the server.
+  /// [updateFile()] method updates the content of the associated JSON file.
   void uploadVideoNow(String s)async {
     String temp = videoDirectoryPath+ "/" + s.substring(0,13) + ".mp4";
     File(videoDirectoryPath +"/"+ s).renameSync(temp);
-//    for( var l in list)
-//      print(l);
-    print(temp);
     uploadFile(temp);
     updateFile(email, s.substring(0,13));
     setter();
   }
 
+  ///Returns the list of [ChewieListItem] widget.
   List<Widget> getVideos(){
 
     List<Widget> listArray = List<Widget>();
@@ -111,6 +124,7 @@ class QuestionsState extends State<Questions>{
     return listArray;
   }
 
+  /// To remove unneeded resources associated with each of the chewieListItem.
   @override
   void dispose() {
     super.dispose();
@@ -118,7 +132,6 @@ class QuestionsState extends State<Questions>{
 
   @override
   Widget build(BuildContext context){
-//    setter();
     return new Scaffold(
         drawer: NavDrawer(email: EMAIL,userName: USER_NAME,),
         appBar: new AppBar(
