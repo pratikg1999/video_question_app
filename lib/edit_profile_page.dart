@@ -10,6 +10,7 @@ import "package:image_picker/image_picker.dart";
 import 'package:teacher/shared_preferences_helpers.dart';
 import 'package:http/http.dart' as http;
 // import 'package:teacher/drawer.dart';
+import 'dart:convert';
 
 class ProfilePage extends StatefulWidget {
   ProfilePageState createState() {
@@ -21,8 +22,8 @@ class ProfilePageState extends State<ProfilePage> {
   // String _fullName = "fullname";
   String _status = "hey";
   String _bio = "programmer";
-  String _quesAnswered = "12";
-  String _quesAsked = "10";
+  String _quesAnswered = "1";
+  String _quesAsked = "1";
   File _image;
   File _tempImage;
   bool uploading = false;
@@ -47,6 +48,25 @@ class ProfilePageState extends State<ProfilePage> {
     nameController.text = fullName;
     ageController.text = age;
     phoneController.text = phone;
+    var token = await getCurrentTokenId();
+    print(token);
+
+    var Response = await http.get(
+        Uri.encodeFull("http://"+serverIP+":"+serverPort+"/getQuestionsInfo?tokenId=$token"),
+        headers:{
+          "Accept": "application/json"
+        }
+    );
+    List list = new List();
+    final map = jsonDecode(Response.body);
+    setState(() {
+      list = map;
+      print("LIST HERE------------------");
+      print(list.toString());
+      _quesAsked = list[0];
+      _quesAnswered = list[1];
+
+    });
     setState(() {});
   }
 

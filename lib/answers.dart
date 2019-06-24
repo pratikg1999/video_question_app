@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'shared_preferences_helpers.dart';
 import 'package:teacher/shared_preferences_helpers.dart';
 
+/// The page where the user can see all the answers that he answered.
 class Answers extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -16,14 +17,18 @@ class Answers extends StatefulWidget {
   }
 }
 
+/// Builds the state associated with [Answers]
 class AnswersState extends State<StatefulWidget> {
-  List list;
-  String _name = USER_NAME;
-  String _email = EMAIL;
 
+  /// The list of names of the answered videos.
+  List list;
+
+  /// Sets the initial values for the state variables.
+  ///
+  /// * token is the unique session id associated with every logged in user.
+  /// * response is the variable used to store the response of the http request.
   Future<void> setter() async {
     var token = await getCurrentTokenId();
-    print(token);
 
     var response = await http.get(
         Uri.encodeFull(
@@ -31,10 +36,8 @@ class AnswersState extends State<StatefulWidget> {
         headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
       final map = jsonDecode(response.body);
-      print(map);
       setState(() {
         list = map;
-        print(list.toString());
       });
     } else {
       Fluttertoast.showToast(
@@ -50,6 +53,8 @@ class AnswersState extends State<StatefulWidget> {
     setter();
   }
 
+
+  ///Returns the list of [ChewieListItemNet] widget.
   List<Widget> getVideos() {
     List<Widget> listArray = List<Widget>();
     if (list != null) {

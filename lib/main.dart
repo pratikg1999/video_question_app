@@ -9,7 +9,6 @@ import 'package:teacher/interestsList.dart';
 import 'answerToMyQuestion.dart';
 import 'package:teacher/NotUploadedQuestions.dart';
 import 'UploadedQuestions.dart';
-import 'storeJson.dart';
 import 'viewProfile.dart';
 void main() => runApp(MyApp());
 
@@ -19,7 +18,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // deleteFile("prateek.pratik.gupta@gmail.com");
     return MaterialApp(
       title: 'Video Question App',
       theme: ThemeData(

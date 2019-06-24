@@ -5,8 +5,10 @@ import 'package:chewie/chewie.dart';
 
 class ChewieListItemNet extends StatefulWidget{
 
+  /// The url from where the video is to be downloaded.
   final String url;
 
+  /// Constructor of [ChewieListItemNet].
   ChewieListItemNet({
     @required this.url,
     Key key
@@ -14,21 +16,22 @@ class ChewieListItemNet extends StatefulWidget{
 
   @override
   ChewieListItemNetState createState() {
-//    print("chewie $file");
     return ChewieListItemNetState();
   }
 }
 
 class ChewieListItemNetState extends State<ChewieListItemNet>{
 
+  /// VideoPlayerController instance required to play video associated with [ChewieListItemNet].
   VideoPlayerController videoPlayerController;
+
+  /// ChewieController instance required to control [ChewieListItemNet].
   ChewieController _chewieController;
 
   @override
   void initState() {
     super.initState();
     videoPlayerController =new VideoPlayerController.network(widget.url);
-    print(videoPlayerController.dataSource);
     _chewieController = ChewieController(
       aspectRatio: 16/9 ,
       videoPlayerController: videoPlayerController,
@@ -56,6 +59,8 @@ class ChewieListItemNetState extends State<ChewieListItemNet>{
   //   _chewieController.dispose();
   //   super.deactivate();
   // }
+
+  /// To remove unneeded resources associated with each of the chewieListItem.
   @override
   void dispose() {
     videoPlayerController.dispose();
