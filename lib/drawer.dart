@@ -6,11 +6,21 @@ import 'package:teacher/LoginPage.dart';
 import 'package:teacher/constants.dart';
 import 'shared_preferences_helpers.dart';
 
-class NavDrawer extends StatefulWidget {
-  final String userName;
-  final String email;
 
-  NavDrawer({this.userName, this.email});
+/// Navigation Drawer for the app.
+/// 
+/// The navigation drawer consists of following routes-
+/// 1. User information with profile-pic which on click will send to [ProfilePage].
+/// 2. My uploaded questions- The questions asked by the current user
+/// 3. Not uploaded questions- The questions not uploaded
+/// 4. My answers- The answers given by current user
+/// 5. Questions for me- The questions asked by other users that current user can answer( based on his interests)
+/// 6. Anwers to my questions- The answers for the questions already asked by user
+/// 7. my Profile- Shows current user profile
+/// 8. Log-out - To logout the current user
+/// 9. Close - To close the navigation drawer
+class NavDrawer extends StatefulWidget {
+  NavDrawer();
 
   DrawerState createState() {
     return new DrawerState();
@@ -18,8 +28,14 @@ class NavDrawer extends StatefulWidget {
 }
 
 class DrawerState extends State<NavDrawer> {
+  /// Name of the currently logged-in user
   String userName = USER_NAME;
+
+  /// Email of the currently logged-in user
   String email = EMAIL;
+
+  /// Reference to the file containing profile-pic of the currently logged-in user 
+  File profilePicFile;
 //  void logOutAction() async {
 //    showDialog(
 //        context: context,
@@ -35,15 +51,23 @@ class DrawerState extends State<NavDrawer> {
 //
 //  }
 
+  /// Re-assigns the [profielPicFile] and [userName]
+  /// 
+  /// Called whenever the parent widget changes.
+  /// This may occur when user starts the navigation drawer again by clicking on the hamburger icon
   @override
-  didUpdateWidget(a) {
+  didUpdateWidget(old) {
     // print("drawer didupdate widget");
     initProfilePicFile();
     userName = USER_NAME;
-    super.didUpdateWidget(a);
+    super.didUpdateWidget(old);
   }
 
-  File profilePicFile;
+
+  /// Initializes the [profilePicFile].
+  /// 
+  /// [profilePicFile] is null if the user hasn't updated his profile-pic even once
+  /// Otherwise it points to the file storing profile-pic (made at time of login)
   Future initProfilePicFile() async {
     Directory appDir = await getApplicationDocumentsDirectory();
     profilePicFile = File(join(appDir.path, "profile_pic.png"));

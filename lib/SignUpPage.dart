@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'checkBoxList.dart';
+import 'package:teacher/interestsList.dart';
 
+/// The signup page
 class SignUp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -8,15 +9,31 @@ class SignUp extends StatefulWidget {
   }
 }
 
+
+/// The UI for the signup page.
 class SignUpState extends State<SignUp> {
+  /// The key for the [Scaffold] present in this.
   final GlobalKey<ScaffoldState> _signupScaffoldKey = new GlobalKey();
   // final bloc = Bloc();
+  /// The Form key for the signup page.
   final formkey = GlobalKey<FormState>();
+
+  /// Email, password and name entered by the user.
   String _email, _password, _name;
+
+  /// [TextEditingController] for password field.
   final _passwordConroller = TextEditingController();
   // final _verifyPasswordController = TextEditingController();
+
+  /// Age entered by the user.
   int _age;
+
+  /// Phone number enterd by the user.
   String _phone;
+
+  /// State variable telling the validity of the email entered
+  /// 
+  /// The email is valid if it contains an **@** symbol.
   bool _emailValid;
 
   @override
@@ -116,7 +133,7 @@ class SignUpState extends State<SignUp> {
                             padding: const EdgeInsets.all(8.0),
                             child: RaisedButton(
                               onPressed: () async {
-                                addStudent();
+                                addUser();
                               },
                               child: Text('Submit'),
                             ),
@@ -130,12 +147,14 @@ class SignUpState extends State<SignUp> {
         }));
   }
 
-  void addStudent() async {
+
+  /// Holds the details entered temporarily and takes the user to [Interests] page.
+  void addUser() async {
     if (formkey.currentState.validate()) {
       formkey.currentState.save();
 
         Navigator.push(context, MaterialPageRoute(builder: (context){
-            return CheckBox(
+            return Interests(
                 name: _name,
                 phone: _phone,
                 age:_age,
@@ -148,7 +167,7 @@ class SignUpState extends State<SignUp> {
 
     } else {
       _signupScaffoldKey.currentState.showSnackBar(
-          new SnackBar(content: Text("Unable to create user..try again")));
+          new SnackBar(content: Text("Please enter the valid details")));
       print("INVALID");
     }
   }

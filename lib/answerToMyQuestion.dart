@@ -11,6 +11,8 @@ import 'dart:convert';
 import 'shared_preferences_helpers.dart';
 import 'package:teacher/shared_preferences_helpers.dart';
 
+
+/// Page that shows answers to questions of currently logged-in user
 class AnswersOfMyQuestion extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -18,13 +20,28 @@ class AnswersOfMyQuestion extends StatefulWidget {
   }
 }
 
+/// UI for the Answers to my questions
 class AnswersOfMyQuestionState extends State<StatefulWidget> {
+  /// The list of the answers to questions.
+  /// 
+  /// The format of questions is-
+  /// ```[[q1_path, answers-to-q1-paths...][q2_path, answers-to-q2-paths...]]```
   List list;
+
+  /// List of details of the person with corresponding answers in [list] 
+  /// 
+  /// The format of [names] is-
+  /// ```[[{}, details...][q2_path, details...]]```
+  /// 
+  /// The details of each person is a [Map] with fields- **Name, email, profile-pic, age, phone, **.
   List<List<Map<String, dynamic>>> names = [];
   String _name = USER_NAME;
   String _email = EMAIL;
 
-  Future<void> setter() async {
+  /// Fetches the [list] of answers and corresponding [details] from the server
+  /// 
+  /// This function is called automatically by [initState()] 
+  Future<void> _setter() async {
     var token = await getCurrentTokenId();
     print(token);
 
@@ -66,9 +83,13 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
   @override
   void initState() {
     super.initState();
-    setter();
+    _setter();
   }
 
+
+  /// Shows the question with [quesPath] to the user in a dialog box
+  /// 
+  /// It fetches the [quesPath] from the server, creates a [VideoPlayer] and shows it in a dialog
   showQuestion(String quesPath) async {
     String fileName = quesPath.substring(quesPath.lastIndexOf("/") + 1);
     print("http://$serverIP:$serverPort/downloadFile/$fileName");
@@ -105,6 +126,29 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
         });
   }
 
+  /// Generates the layout for the video/answers [list]
+  /// 
+  /// Corresponding to each question a card is generated with following struture
+  /// ```html
+  /// <html>
+  /// <table>
+  /// <tr><th>question<th><tr>
+  /// <tr><td>Person name</td></tr>
+  /// <tr><td>Answer 1</td></tr>
+  /// <tr><td></td></tr>
+  /// <tr><td>Person name 2</td></tr>
+  /// <tr><td>Answer 2</td></tr>
+  /// <tr><td></td></tr>
+  /// <tr><th>question<th><tr>
+  /// <tr><td>Person name</td></tr>
+  /// <tr><td>Answer 1</td></tr>
+  /// <tr><td></td></tr>
+  /// <tr><td>Person name 2</td></tr>
+  /// <tr><td>Answer 2</td></tr>
+  /// <tr><td></td></tr>
+  /// <tabe>
+  /// </html>
+  /// ```
   List<Widget> getVideos() {
     List<Widget> listArray = List<Widget>();
     if (list != null) {
@@ -211,10 +255,7 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
 
   Widget build(BuildContext context) {
     return new Scaffold(
-        drawer: NavDrawer(
-          email: EMAIL,
-          userName: USER_NAME,
-        ),
+        drawer: NavDrawer(),
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),
@@ -224,7 +265,4 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
           ),
         ));
   }
-}
-
-class ViewProfile {
 }

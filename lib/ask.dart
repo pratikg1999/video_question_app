@@ -39,7 +39,7 @@ class AskState extends State<Ask> {
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),
-        drawer : NavDrawer(userName:_name,email:_email),
+        drawer : NavDrawer(),
         body: new Center(
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.center,

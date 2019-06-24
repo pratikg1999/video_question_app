@@ -120,7 +120,7 @@ class QuestionsState extends State<Questions>{
   Widget build(BuildContext context){
 //    setter();
     return new Scaffold(
-        drawer: NavDrawer(email: EMAIL,userName: USER_NAME,),
+        drawer: NavDrawer(),
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),

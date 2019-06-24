@@ -9,6 +9,13 @@ import 'uploadVideo.dart';
 import 'storeJson.dart';
 import 'package:teacher/shared_preferences_helpers.dart';
 
+/// Video Recorder page to ask question
+/// 
+/// The video recorded is saved in the external storage with current timestamp as name.
+/// It can be uploaded instantly to server if user selects to do so,
+/// otherwise it can be uploaded later on.
+/// The details of the video is also stored in a JSON file present locally in the application's root directory.
+/// The JSON file is handy when loading the user's videos.
 class VideoRecorderExample extends StatefulWidget {
   @override
   _VideoRecorderExampleState createState() {
@@ -16,18 +23,39 @@ class VideoRecorderExample extends StatefulWidget {
   }
 }
 
+
+/// The video recorder screen UI.
 class _VideoRecorderExampleState extends State<VideoRecorderExample> {
+  /// [CameraController] to get access to the camera
   CameraController controller;
+
+  /// The complete path of the currently-being-recorded video
   String videoPath;
 
+  /// The list of cameras present in the device.
   List<CameraDescription> cameras;
+
+  /// The index of the currently selected camera from [cameras]
   int selectedCameraIdx = 0;
+
+  /// Whether the current video is to be uploaded to the server.
   bool toUpload = true;
+
+  /// The current time used as name of the [videoPath].
   String currentTime;
+
+  /// Email of the currently logged-in user.
   String email;
+
+  /// The path where all videos are stored.
   String videoDirectory;
+
+  /// The key for the [Scaffold] of this.
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  /// Asks the user to permit to write external storage
+  /// 
+  /// Permission is necessary as video files are stored in external storage
   requestWritePermission() async {
     PermissionStatus permissionStatus = await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
 
@@ -38,6 +66,10 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     }
   }
 
+
+  /// Performas initial set-up of the camera.
+  /// 
+  /// By-default back-camera is used to record videos.
   Future<void> _setUpCameras() async {
 try {
       // initialize cameras.
@@ -54,6 +86,11 @@ try {
 
     });
   }
+
+
+  /// Takes External Storage write permission and sets up the camera.
+  /// 
+  /// calls [requestWritePermission()] and [_setUpCameras()] internally to do so.
   @override
   void initState() {
     super.initState();
@@ -124,6 +161,9 @@ try {
     );
   }
 
+  /// Returns the icon to display in the _switch camera_ button
+  /// 
+  /// The icon is according to the current camera being used.
   IconData _getCameraLensIcon(CameraLensDirection direction) {
     switch (direction) {
       case CameraLensDirection.back:
@@ -137,7 +177,7 @@ try {
     }
   }
 
-  // Display 'Loading' text when the camera is still loading.
+  /// Displays 'Loading' text when the camera is still loading.
   Widget _cameraPreviewWidget() {
     print("controller: $controller");
     print(controller?.value);
@@ -216,8 +256,13 @@ try {
     );
   }
 
+  /// Returns the current timestamp from the system.
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
+
+  /// Switches the camera according to the [cameraDescription].
+  /// 
+  /// The [cameraDescription] contains the information of the camera to be used.
   Future<void> _onCameraSwitched(CameraDescription cameraDescription) async {
     if (controller != null) {
       await controller.dispose();
@@ -256,6 +301,10 @@ try {
     }
   }
 
+
+  /// Cycles the camera to be used.
+  /// 
+  /// The next camera in the [cameras] is selected
   void _onSwitchCamera() {
     selectedCameraIdx = selectedCameraIdx < cameras.length - 1
         ? selectedCameraIdx + 1
@@ -269,6 +318,10 @@ try {
     });
   }
 
+
+  /// Performs action on Record button pressed.
+  /// 
+  /// calls [_startVideoRecording()] internally to perform video recording
   void _onRecordButtonPressed() {
     _startVideoRecording().then((String filePath) {
       if (filePath != null) {
@@ -285,6 +338,22 @@ try {
   }
 
 
+  /// shows dialog to ask user whether to upload the currently recorded video, just save locally, or discard it
+  /// 
+  /// Makes [toUpload] true or false accordingly as **Upload now** or **Upload later** is selected.
+  /// If **Upload now** is selected-
+  /// * [toUpload] is made true
+  /// * [_stopVideoRecording()] is called to stop video recording
+  /// * [addToFile()] is called to update local JSON file with the current video
+  /// 
+  /// If **Upload later** is selected-
+  /// * [toUpload] is made false
+  /// * [_stopVideoRecording()] is called to stop video recording
+  /// * [addToFile()] is called to update local JSON file with the current video
+  /// 
+  ///  If **Discard** is selected-
+  /// * The currently recorded video is deleted
+  /// 
   Future<void> _showDialog() async {
     await showDialog(
       barrierDismissible: false,
@@ -351,10 +420,20 @@ try {
     );
   }
 
+  /// Performs action on Stop button pressed
   void _onStopButtonPressed() async {
     await _showDialog();
   }
 
+
+  /// Starts the video recording.
+  /// 
+  /// It does the following-
+  /// * Sets [email] of the currently logged-in user
+  /// * Creates the [videoDiretory]
+  /// * Gets [currentTime]
+  /// * Sets the [videoPath] by using the [currentTime] 
+  /// * Starts recording video in the [videoPath]
   Future<String> _startVideoRecording() async {
     email =  await getFromSP(EMAIL_KEY_SP);
     if (!controller.value.isInitialized) {
@@ -395,6 +474,15 @@ try {
     return filePath;
   }
 
+
+  /// Stops the video recording. The video is saved in [videoPath].
+  /// 
+  /// If [toUpload] is true-
+  /// * Uploads the video to the server by calling [uploadFile()]
+  /// 
+  /// If [toUpload] is false-
+  /// * Renames the file by appending "NotUploaded" to it
+  /// * Doesn't upload it.
   Future<void> _stopVideoRecording() async {
     if (!controller.value.isRecordingVideo) {
       return null;
@@ -416,6 +504,10 @@ try {
 
   }
 
+
+  /// Shows the exception/error [e] occured in [controller]
+  /// 
+  /// Helper method called to show exceptions.
   void _showCameraException(CameraException e) {
     String errorText = 'Error: ${e.code}\nError Message: ${e.description}';
     print(errorText);
@@ -431,6 +523,8 @@ try {
   }
 }
 
+
+/// The wrapper class for video recorder.
 class VideoRecorderApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

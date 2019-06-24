@@ -6,12 +6,16 @@ import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 import 'dart:convert';
 
-
-class CheckBox extends StatefulWidget {
+/// Interests page to select the interest fields of a user.
+/// 
+/// The user will be displayed a list of interesets.
+/// He can check one or more item that interests him.
+/// After saving a new Sign-up request is sent to the Server with all the details of the user and new account is created.
+class Interests extends StatefulWidget {
   final String name,email,phone,password;
   final int age;
 
-  CheckBox({
+  Interests({
     this.age,
     this.name,
     this.password,
@@ -20,10 +24,12 @@ class CheckBox extends StatefulWidget {
 });
 
   @override
-  CheckBoxState createState() => new CheckBoxState();
+  InterestsState createState() => new InterestsState();
 }
 
-class CheckBoxState extends State<CheckBox> {
+
+/// The UI for the Interests Page.
+class InterestsState extends State<Interests> {
   Map<String, bool> values = {
     'Politics': false,
     'Sports': false,
@@ -47,8 +53,10 @@ class CheckBoxState extends State<CheckBox> {
     'Engineering':false,
   };
 
+  /// Key for the [Scaffold] of this.
   final GlobalKey<ScaffoldState> _signupScaffoldKey = new GlobalKey();
 
+  /// The list of choices that the user fills.
   List<String> list = new List<String>();
 
   @override
@@ -91,6 +99,10 @@ class CheckBoxState extends State<CheckBox> {
     );
   }
 
+
+  /// Saves the interests entered by user in the [list] and sends sign-up request to the server with all his details.
+  /// 
+  /// Saves the list and call [send()] internally to send the request.
   void save() async {
     values.forEach((k, v) => print('$k: $v'));
     values.forEach((k, v) {
@@ -104,6 +116,13 @@ class CheckBoxState extends State<CheckBox> {
     // Navigator.pop(context);
   }
 
+  /// Sends a sign-up request to the Server to create a new user account
+  /// 
+  /// The request is a Multipart Http request the contains all his details in key-value pairs.
+  /// If sign-up is successfull user is sent to [LoginPage].
+  /// Sign-up fails if-
+  /// * user with the email already exists or
+  /// * Some network or server error occurs
   send() async {
     showDialog(
         barrierDismissible: false,

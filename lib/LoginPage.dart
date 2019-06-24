@@ -13,6 +13,10 @@ import 'package:teacher/constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'Institute.dart';
 
+/// Logs out the currently logged in user.
+/// 
+/// Sends a request to the API(server) to logout and 
+/// returns the response code received from the server
 Future<int> logOut() async {
   String tokenId = await getCurrentTokenId();
   print("token is $tokenId");
@@ -34,7 +38,12 @@ Future<int> logOut() async {
   return response.statusCode;
 }
 
+
+/// The login page 
+/// 
+/// This is the default page of the app.
 class LoginPage extends StatefulWidget {
+  /// Creates a login page with the User's [title]
   LoginPage({Key key, this.title}) : super(key: key);
 
   final String title;
@@ -43,17 +52,37 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
+
+/// The UI of the login page
 class _LoginPageState extends State<LoginPage> {
   var _documentDir;
+
+  /// Global key for the scaffold in this page
   final GlobalKey<ScaffoldState> _loginScaffoldKey = new GlobalKey();
+
+  /// State variable telling the validity of the password entered.
+  /// 
+  /// User can only loggin if this property is true.
   bool isPasswordValid = true;
+
+  /// State variable telling the validity of the password entered.
+  /// 
+  /// User can only loggin if this property is true.
   bool isEmailValid = true;
   static String _email = "", _password = "";
+
+  /// [TextEditingController] for email field
   final _emailController = TextEditingController(text: _email);
+
+  /// [TextEditingController] for password field  
   final _passwordController = TextEditingController(text: _password);
 
 
-
+  /// Creates a snackbar that shows [errText] to the user.
+  /// 
+  /// Used to generate snackbar when the user's email is not verified.
+  /// The [errText] is the message displayed in the snackbar
+  /// The returned snackbar also contains a button to resend verification mail.
   Widget snackbarEmailVerification(String errText) {
     return SnackBar(
       content: Column(
@@ -89,6 +118,11 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+
+  /// Checks whether a user is already signed in the app
+  /// 
+  /// Automatically gets called when the app starts.
+  /// If the user is logged in, it takes the user to the [Ask] page.
   void checkSignInStatus() async {
     print(await isKeyPresentInSP(TOKEN_KEY_SP));
     print(await isKeyPresentInSP(EMAIL_KEY_SP));
@@ -111,6 +145,8 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
+
+  /// Downloads the [imageName] from the server which is a profile picture.
   Future downloadImage(imageName) async {
     print("downloading pic");
     var response = await http
@@ -128,6 +164,11 @@ class _LoginPageState extends State<LoginPage> {
 
 //    final _passwordController = TextEditingController();
 
+    /// Submits this form to the user and logs in the user if all details are valid and email is verified
+    /// 
+    /// Takes user to the [Ask] screen if successfully logged in.
+    /// All fields need to filled to continue logging in.
+    /// Shows **Email not verified** snackbar if the user's email is not verified.
     _submit() async {
 
 
@@ -255,6 +296,9 @@ class _LoginPageState extends State<LoginPage> {
 
     }
 
+    /// The submit button for the login form
+    /// 
+    /// Calls the [_submit()] function on tap.
     var loginBtn = new RaisedButton(
       onPressed: () {
         FocusScope.of(context)
@@ -264,15 +308,21 @@ class _LoginPageState extends State<LoginPage> {
       child: new Text("LOGIN"),
       color: Colors.primaries[3],
     );
+
+    /// Button to navigate to [SignUpPage]
+    /// 
+    /// To be clicked if new user registration is required
     var registerBtn = new FlatButton(
         onPressed: () async {
-          await _showDialog();
+          await _showUserTypeDialog();
           // Navigator.push(
           //   context,
           //   MaterialPageRoute(builder: (context) => SignUp()),
           // );
         },
         child: new Text("Create a new account"));
+
+    /// The login form with the email and password field, and login button
     var loginForm = new Column(
       children: <Widget>[
         new Form(
@@ -354,8 +404,10 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
-  Future<void> _showDialog() async {
+  /// Shows the dialog to select the type of account to create.
+  /// 
+  /// The account types can be **User** or **Institute**.
+  Future<void> _showUserTypeDialog() async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {

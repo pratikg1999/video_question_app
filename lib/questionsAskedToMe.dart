@@ -96,7 +96,7 @@ class QuestionsAskedState extends State<QuestionsAsked> {
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),
-        drawer: NavDrawer(userName: _name, email: _email),
+        drawer: NavDrawer(),
         body: Container(
           child: ListView(
             children: getVideos(),

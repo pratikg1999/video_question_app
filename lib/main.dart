@@ -5,7 +5,7 @@ import 'package:teacher/answers.dart';
 import 'package:teacher/edit_profile_page.dart';
 import 'questionsAskedToMe.dart';
 import 'ask.dart';
-import 'checkBoxList.dart';
+import 'package:teacher/interestsList.dart';
 import 'answerToMyQuestion.dart';
 import 'package:teacher/NotUploadedQuestions.dart';
 import 'UploadedQuestions.dart';
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/ask': (context) => Ask(),
         '/uploadedvideo' : (context) => UploadedQuestions(),
-        '/checkBox' : (context) => CheckBox(),
+        '/checkBox' : (context) => Interests(),
         '/profile': (context) => ProfilePage(),
         '/questionsAsked': (context) => QuestionsAsked(),
         '/answersPage' : (context) => AnswersOfMyQuestion(),
