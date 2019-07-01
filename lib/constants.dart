@@ -1,6 +1,6 @@
 
 /// Server's IP address
-final String serverIP =  "192.168.43.244";
+final String serverIP =  "192.168.43.27";
 
 /// Server's port address
 final String serverPort = "8080";   

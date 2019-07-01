@@ -70,22 +70,22 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   /// Performas initial set-up of the camera.
   /// 
   /// By-default back-camera is used to record videos.
-  Future<void> _setUpCameras() async {
-try {
-      // initialize cameras.
-      cameras = await availableCameras();
-      // initialize camera controllers.
-      controller = new CameraController(cameras[0], ResolutionPreset.medium);
-      await controller.initialize();
-    } on CameraException catch (e) {
-      print(e);
-      await controller.initialize();
-    }
-    if (mounted==false) return;
-    setState(() {
-
-    });
-  }
+//  Future<void> _setUpCameras() async {
+//try {
+//      // initialize cameras.
+//      cameras = await availableCameras();
+//      // initialize camera controllers.
+//      controller = new CameraController(cameras[0], ResolutionPreset.medium);
+//      await controller.initialize();
+//    } on CameraException catch (e) {
+//      print(e);
+//      await controller.initialize();
+//    }
+//    if (mounted==false) return;
+//    setState(() {
+//
+//    });
+//  }
 
 
   /// Takes External Storage write permission and sets up the camera.
@@ -95,24 +95,22 @@ try {
   void initState() {
     super.initState();
     requestWritePermission();
-    // Get the listonNewCameraSelected of available cameras.
-    // Then set the first camera as selected.
-    // availableCameras()
-    //     .then((availableCameras) {
-    //   cameras = availableCameras;
-    //   print(cameras);
-    //   if (cameras.length > 0) {
-    //     setState(() {
-    //       selectedCameraIdx = 0;
-    //     });
-    //     print(selectedCameraIdx);
-    //     _onCameraSwitched(cameras[selectedCameraIdx]).then((void v) {});
-    //   }
-    // })
-    //     .catchError((err) {
-    //   print('Error: $err.code\nError Message: $err.message');
-    // });
-    _setUpCameras();
+     availableCameras()
+         .then((availableCameras) {
+       cameras = availableCameras;
+       print(cameras);
+       if (cameras.length > 0) {
+         setState(() {
+           selectedCameraIdx = 0;
+         });
+         print(selectedCameraIdx);
+         _onCameraSwitched(cameras[selectedCameraIdx]).then((void v) {});
+       }
+     })
+         .catchError((err) {
+       print('Error: $err.code\nError Message: $err.message');
+     });
+    //_setUpCameras();
   }
 
   @override
@@ -276,16 +274,16 @@ try {
         setState(() {});
       }
 
-      if (controller.value.hasError) {
-        Fluttertoast.showToast(
-            msg: 'Camera error ${controller.value.errorDescription}',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIos: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white
-        );
-      }
+//      if (controller.value.hasError) {
+//        Fluttertoast.showToast(
+//            msg: 'Camera error ${controller.value.errorDescription}',
+//            toastLength: Toast.LENGTH_SHORT,
+//            gravity: ToastGravity.CENTER,
+//            timeInSecForIos: 1,
+//            backgroundColor: Colors.red,
+//            textColor: Colors.white
+//        );
+//      }
     });
 
     try {
@@ -293,6 +291,7 @@ try {
       await controller.initialize();
       print("intialze complete");
     } on CameraException catch (e) {
+      print("11111111111111111");
       _showCameraException(e);
     }
 
@@ -324,6 +323,8 @@ try {
   /// calls [_startVideoRecording()] internally to perform video recording
   void _onRecordButtonPressed() {
     _startVideoRecording().then((String filePath) {
+      print("FILLLEEEPATHHH");
+      print(filePath);
       if (filePath != null) {
         Fluttertoast.showToast(
             msg: 'Recording video started',
@@ -397,7 +398,7 @@ try {
                 new FlatButton(
                   child: new Text("Discard"),
                   onPressed: () async {
-                    await controller.stopVideoRecording();
+                    //await controller.stopVideoRecording();
                     File file = new File(videoPath);
                     file.delete();
 
@@ -422,6 +423,10 @@ try {
 
   /// Performs action on Stop button pressed
   void _onStopButtonPressed() async {
+    if (!controller.value.isRecordingVideo) {
+      return;
+    }
+    await controller.stopVideoRecording();
     await _showDialog();
   }
 
@@ -437,6 +442,7 @@ try {
   Future<String> _startVideoRecording() async {
     email =  await getFromSP(EMAIL_KEY_SP);
     if (!controller.value.isInitialized) {
+      print("CONTROLLER IS NOT INITIALISED");
       Fluttertoast.showToast(
           msg: 'Please wait',
           toastLength: Toast.LENGTH_SHORT,
@@ -445,12 +451,12 @@ try {
           backgroundColor: Colors.grey,
           textColor: Colors.white
       );
-
       return null;
     }
 
     // Do nothing if a recording is on progress
     if (controller.value.isRecordingVideo) {
+      print("STILL RECORDING VIDEO");
       return null;
     }
 
@@ -467,10 +473,12 @@ try {
       await controller.startVideoRecording(filePath);
       videoPath = filePath;
     } on CameraException catch (e) {
+      print("IN CATCH");
+      print("22222222222222222");
       _showCameraException(e);
       return null;
     }
-
+    print("No ERRORRR");
     return filePath;
   }
 
@@ -484,20 +492,22 @@ try {
   /// * Renames the file by appending "NotUploaded" to it
   /// * Doesn't upload it.
   Future<void> _stopVideoRecording() async {
-    if (!controller.value.isRecordingVideo) {
-      return null;
-    }
 
     try {
-      await controller.stopVideoRecording();
-      if(toUpload)
+      //await controller.stopVideoRecording();
+      if(toUpload){
+        print("SSSSSSSSSSSSSSS");
         uploadFile(videoPath);
+      }
+        
       else{
+        print("HHHHHHHHHHHHHHHH");
         String newPath = videoDirectory + "/" + currentTime + "NotUploaded.mp4";
         print(newPath);
         File(videoPath).renameSync(newPath);
       }
     } on CameraException catch (e) {
+      print("333333333333333333333");
       _showCameraException(e);
       return null;
     }
@@ -511,6 +521,8 @@ try {
   void _showCameraException(CameraException e) {
     String errorText = 'Error: ${e.code}\nError Message: ${e.description}';
     print(errorText);
+    print("PPPPPPPPPPPPPPPPPPPPPPPP");
+    print("Error: ${e.code}\n${e.description}");
 
     Fluttertoast.showToast(
         msg: 'Error: ${e.code}\n${e.description}',
@@ -533,7 +545,3 @@ class VideoRecorderApp extends StatelessWidget {
     );
   }
 }
-
-//Future<void> main() async {
-//  runApp(VideoRecorderApp());
-//}

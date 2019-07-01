@@ -62,7 +62,7 @@ class AnswersState extends State<StatefulWidget> {
           url: "http://$serverIP:$serverPort/downloadAnswer/" +
               list[i]
                   .toString()
-                  .substring(list[i].toString().lastIndexOf("/") + 1),
+                  .substring(list[i].toString().lastIndexOf("\\") + 1),
           key: UniqueKey(),
         ));
       }
