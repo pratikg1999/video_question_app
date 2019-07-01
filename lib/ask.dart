@@ -63,7 +63,7 @@ class AskState extends State<Ask> {
                     onPressed: (){
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => VideoRecorderExample()),
+                        MaterialPageRoute(builder: (context) => VideoRecorderApp()),
                       );
                     },
                     child: new Text("Ask Question"),

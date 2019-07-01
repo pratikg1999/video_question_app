@@ -34,7 +34,7 @@ class QuestionsAskedState extends State<QuestionsAsked> {
   Future<void> setter() async {
     var token = await getCurrentTokenId();
     print(token);
-
+    print("http://$serverIP:$serverPort/getQuestions?tokenId=$token");
     var response = await http.get(
         Uri.encodeFull(
             "http://$serverIP:$serverPort/getQuestions?tokenId=$token"),
@@ -65,7 +65,7 @@ class QuestionsAskedState extends State<QuestionsAsked> {
               url: "http://$serverIP:$serverPort/downloadFile/" +
                   list[index]
                       .toString()
-                      .substring(list[index].toString().lastIndexOf("/") + 1),
+                      .substring(list[index].toString().lastIndexOf("\\") + 1),
               key: UniqueKey(),
             ),
             Row(
