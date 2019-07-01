@@ -10,7 +10,7 @@ import 'storeJson.dart';
 import 'package:teacher/shared_preferences_helpers.dart';
 
 /// Video Recorder page to ask question
-/// 
+///
 /// The video recorded is saved in the external storage with current timestamp as name.
 /// It can be uploaded instantly to server if user selects to do so,
 /// otherwise it can be uploaded later on.
@@ -22,7 +22,6 @@ class VideoRecorderExample extends StatefulWidget {
     return _VideoRecorderExampleState();
   }
 }
-
 
 /// The video recorder screen UI.
 class _VideoRecorderExampleState extends State<VideoRecorderExample> {
@@ -54,10 +53,12 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   /// Asks the user to permit to write external storage
-  /// 
+  ///
   /// Permission is necessary as video files are stored in external storage
   requestWritePermission() async {
-    PermissionStatus permissionStatus = await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
+    PermissionStatus permissionStatus =
+        await SimplePermissions.requestPermission(
+            Permission.WriteExternalStorage);
 
     if (permissionStatus == PermissionStatus.authorized) {
       setState(() {
@@ -66,35 +67,63 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     }
   }
 
+  requestCameraPermission() async {
+    PermissionStatus permissionStatusCamera =
+        await SimplePermissions.requestPermission(Permission.Camera);
+    if (permissionStatusCamera == PermissionStatus.authorized) {
+      setState(() {
+        //_allowWriteFile = true;
+      });
+    }
+    PermissionStatus permissionStatusAudio =
+        await SimplePermissions.requestPermission(Permission.RecordAudio);
+    if (permissionStatusAudio == PermissionStatus.authorized) {
+      setState(() {
+        //_allowWriteFile = true;
+      });
+    }
+  }
+
+  requestPermissions() async {
+    await requestCameraPermission();
+    await requestWritePermission();
+  }
 
   /// Performas initial set-up of the camera.
-  /// 
+  ///
   /// By-default back-camera is used to record videos.
   Future<void> _setUpCameras() async {
-try {
+    try {
       // initialize cameras.
+      bool camPer = await SimplePermissions.checkPermission(Permission.Camera);
+      bool audioPer =
+          await SimplePermissions.checkPermission(Permission.RecordAudio);
+      if (!camPer) {
+        await SimplePermissions.requestPermission(Permission.Camera);
+      }
+      if (!audioPer) {
+        await SimplePermissions.requestPermission(Permission.RecordAudio);
+      }
       cameras = await availableCameras();
       // initialize camera controllers.
       controller = new CameraController(cameras[0], ResolutionPreset.medium);
       await controller.initialize();
     } on CameraException catch (e) {
       print(e);
-      await controller.initialize();
+      // await controller.initialize();
     }
-    if (mounted==false) return;
-    setState(() {
-
-    });
+    if (mounted == false) return;
+    setState(() {});
   }
 
-
   /// Takes External Storage write permission and sets up the camera.
-  /// 
+  ///
   /// calls [requestWritePermission()] and [_setUpCameras()] internally to do so.
   @override
   void initState() {
     super.initState();
-    requestWritePermission();
+    requestPermissions();
+    // requestWritePermission();
     // Get the listonNewCameraSelected of available cameras.
     // Then set the first camera as selected.
     // availableCameras()
@@ -162,7 +191,7 @@ try {
   }
 
   /// Returns the icon to display in the _switch camera_ button
-  /// 
+  ///
   /// The icon is according to the current camera being used.
   IconData _getCameraLensIcon(CameraLensDirection direction) {
     switch (direction) {
@@ -213,12 +242,9 @@ try {
         alignment: Alignment.centerLeft,
         child: FlatButton.icon(
             onPressed: _onSwitchCamera,
-            icon: Icon(
-                _getCameraLensIcon(lensDirection)
-            ),
-            label: Text("${lensDirection.toString()
-                .substring(lensDirection.toString().indexOf('.')+1)}")
-        ),
+            icon: Icon(_getCameraLensIcon(lensDirection)),
+            label: Text(
+                "${lensDirection.toString().substring(lensDirection.toString().indexOf('.') + 1)}")),
       ),
     );
   }
@@ -236,8 +262,8 @@ try {
               icon: const Icon(Icons.videocam),
               color: Colors.blue,
               onPressed: controller != null &&
-                  controller.value.isInitialized &&
-                  !controller.value.isRecordingVideo
+                      controller.value.isInitialized &&
+                      !controller.value.isRecordingVideo
                   ? _onRecordButtonPressed
                   : null,
             ),
@@ -245,8 +271,8 @@ try {
               icon: const Icon(Icons.stop),
               color: Colors.red,
               onPressed: controller != null &&
-                  controller.value.isInitialized &&
-                  controller.value.isRecordingVideo
+                      controller.value.isInitialized &&
+                      controller.value.isRecordingVideo
                   ? _onStopButtonPressed
                   : null,
             )
@@ -259,9 +285,8 @@ try {
   /// Returns the current timestamp from the system.
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
-
   /// Switches the camera according to the [cameraDescription].
-  /// 
+  ///
   /// The [cameraDescription] contains the information of the camera to be used.
   Future<void> _onCameraSwitched(CameraDescription cameraDescription) async {
     if (controller != null) {
@@ -283,8 +308,7 @@ try {
             gravity: ToastGravity.CENTER,
             timeInSecForIos: 1,
             backgroundColor: Colors.red,
-            textColor: Colors.white
-        );
+            textColor: Colors.white);
       }
     });
 
@@ -301,14 +325,12 @@ try {
     }
   }
 
-
   /// Cycles the camera to be used.
-  /// 
+  ///
   /// The next camera in the [cameras] is selected
   void _onSwitchCamera() {
-    selectedCameraIdx = selectedCameraIdx < cameras.length - 1
-        ? selectedCameraIdx + 1
-        : 0;
+    selectedCameraIdx =
+        selectedCameraIdx < cameras.length - 1 ? selectedCameraIdx + 1 : 0;
     CameraDescription selectedCamera = cameras[selectedCameraIdx];
 
     _onCameraSwitched(selectedCamera);
@@ -318,9 +340,8 @@ try {
     });
   }
 
-
   /// Performs action on Record button pressed.
-  /// 
+  ///
   /// calls [_startVideoRecording()] internally to perform video recording
   void _onRecordButtonPressed() {
     _startVideoRecording().then((String filePath) {
@@ -331,111 +352,112 @@ try {
             gravity: ToastGravity.CENTER,
             timeInSecForIos: 1,
             backgroundColor: Colors.grey,
-            textColor: Colors.white
-        );
+            textColor: Colors.white);
       }
     });
   }
 
-
   /// shows dialog to ask user whether to upload the currently recorded video, just save locally, or discard it
-  /// 
+  ///
   /// Makes [toUpload] true or false accordingly as **Upload now** or **Upload later** is selected.
   /// If **Upload now** is selected-
   /// * [toUpload] is made true
   /// * [_stopVideoRecording()] is called to stop video recording
   /// * [addToFile()] is called to update local JSON file with the current video
-  /// 
+  ///
   /// If **Upload later** is selected-
   /// * [toUpload] is made false
   /// * [_stopVideoRecording()] is called to stop video recording
   /// * [addToFile()] is called to update local JSON file with the current video
-  /// 
+  ///
   ///  If **Discard** is selected-
   /// * The currently recorded video is deleted
-  /// 
+  ///
   Future<void> _showDialog() async {
     await showDialog(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: AlertDialog(
-              title: new Text("Select an option"),
-              content: new Text("What do you want to do?"),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text("Upload Now"),
-                  onPressed: () {
-                    setState(() {
-                      toUpload=true;
-                    });
-                    _stopVideoRecording().then((_) {
-                      if (mounted) setState(() {});
-                    });
-                    addToFile( email,currentTime+".mp4","Uploaded");
-                    Navigator.of(context).pop();
-                    return;
-                  },
-                ),
-                new FlatButton(
-                  child: new Text("Upload Later"),
-                  onPressed: () {
-                    setState(() {
-                      toUpload=false;
-                    });
-                    _stopVideoRecording().then((_) {
-                      if (mounted) setState(() {});
-                    });
-                    addToFile(email,currentTime+ "NotUploaded" +".mp4","Not_Uploaded");
-                    Navigator.of(context).pop();
-                    return;
-                  },
-                ),
-                new FlatButton(
-                  child: new Text("Discard"),
-                  onPressed: () async {
-                    await controller.stopVideoRecording();
-                    File file = new File(videoPath);
-                    file.delete();
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: AlertDialog(
+            title: new Text("Select an option"),
+            content: new Text("What do you want to do?"),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text("Upload Now"),
+                onPressed: () {
+                  setState(() {
+                    toUpload = true;
+                  });
+                  _stopVideoRecording().then((_) {
+                    if (mounted) setState(() {});
+                  });
+                  addToFile(email, currentTime + ".mp4", "Uploaded");
+                  Navigator.of(context).pop();
+                  return;
+                },
+              ),
+              new FlatButton(
+                child: new Text("Upload Later"),
+                onPressed: () {
+                  setState(() {
+                    toUpload = false;
+                  });
+                  _stopVideoRecording().then((_) {
+                    if (mounted) setState(() {});
+                  });
+                  addToFile(email, currentTime + "NotUploaded" + ".mp4",
+                      "Not_Uploaded");
+                  Navigator.of(context).pop();
+                  return;
+                },
+              ),
+              new FlatButton(
+                child: new Text("Discard"),
+                onPressed: () async {
+                  await controller.stopVideoRecording();
+                  File file = new File(videoPath);
+                  file.delete();
 
-                    // Fluttertoast.showToast(
-                    //     msg: 'Successfully deleted video',
-                    //     toastLength: Toast.LENGTH_SHORT,
-                    //     gravity: ToastGravity.CENTER,
-                    //     timeInSecForIos: 1,
+                  // Fluttertoast.showToast(
+                  //     msg: 'Successfully deleted video',
+                  //     toastLength: Toast.LENGTH_SHORT,
+                  //     gravity: ToastGravity.CENTER,
+                  //     timeInSecForIos: 1,
 
-                    //     textColor: Colors.black
-                    // );
-                    Navigator.of(context).pop();
-                    return;
-                  },
-                ),
-              ],
-            ),
-          );
+                  //     textColor: Colors.black
+                  // );
+                  Navigator.of(context).pop();
+                  return;
+                },
+              ),
+            ],
+          ),
+        );
       },
     );
   }
 
   /// Performs action on Stop button pressed
   void _onStopButtonPressed() async {
+    if (!controller.value.isRecordingVideo) {
+      return;
+    }
+    await controller.stopVideoRecording();
     await _showDialog();
   }
 
-
   /// Starts the video recording.
-  /// 
+  ///
   /// It does the following-
   /// * Sets [email] of the currently logged-in user
   /// * Creates the [videoDiretory]
   /// * Gets [currentTime]
-  /// * Sets the [videoPath] by using the [currentTime] 
+  /// * Sets the [videoPath] by using the [currentTime]
   /// * Starts recording video in the [videoPath]
   Future<String> _startVideoRecording() async {
-    email =  await getFromSP(EMAIL_KEY_SP);
+    email = await getFromSP(EMAIL_KEY_SP);
     if (!controller.value.isInitialized) {
       Fluttertoast.showToast(
           msg: 'Please wait',
@@ -443,8 +465,7 @@ try {
           gravity: ToastGravity.CENTER,
           timeInSecForIos: 1,
           backgroundColor: Colors.grey,
-          textColor: Colors.white
-      );
+          textColor: Colors.white);
 
       return null;
     }
@@ -474,25 +495,20 @@ try {
     return filePath;
   }
 
-
   /// Stops the video recording. The video is saved in [videoPath].
-  /// 
+  ///
   /// If [toUpload] is true-
   /// * Uploads the video to the server by calling [uploadFile()]
-  /// 
+  ///
   /// If [toUpload] is false-
   /// * Renames the file by appending "NotUploaded" to it
   /// * Doesn't upload it.
   Future<void> _stopVideoRecording() async {
-    if (!controller.value.isRecordingVideo) {
-      return null;
-    }
-
     try {
-      await controller.stopVideoRecording();
-      if(toUpload)
+      // await controller.stopVideoRecording();
+      if (toUpload)
         uploadFile(videoPath);
-      else{
+      else {
         String newPath = videoDirectory + "/" + currentTime + "NotUploaded.mp4";
         print(newPath);
         File(videoPath).renameSync(newPath);
@@ -501,12 +517,10 @@ try {
       _showCameraException(e);
       return null;
     }
-
   }
 
-
   /// Shows the exception/error [e] occured in [controller]
-  /// 
+  ///
   /// Helper method called to show exceptions.
   void _showCameraException(CameraException e) {
     String errorText = 'Error: ${e.code}\nError Message: ${e.description}';
@@ -518,11 +532,9 @@ try {
         gravity: ToastGravity.CENTER,
         timeInSecForIos: 1,
         backgroundColor: Colors.red,
-        textColor: Colors.white
-    );
+        textColor: Colors.white);
   }
 }
-
 
 /// The wrapper class for video recorder.
 class VideoRecorderApp extends StatelessWidget {

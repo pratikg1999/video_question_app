@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teacher/shared_preferences_helpers.dart';
+import 'package:teacher/vid_player.dart';
+import 'package:video_player/video_player.dart';
 import 'constants.dart';
 import 'dart:io';
 import 'dart:async';
@@ -10,7 +12,7 @@ import 'storeJson.dart';
 import 'drawer.dart';
 
 /// The page where the user can see all his uploaded questions.
-class UploadedQuestions extends StatefulWidget{
+class UploadedQuestions extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return UploadedQuestionsState();
@@ -18,31 +20,35 @@ class UploadedQuestions extends StatefulWidget{
 }
 
 /// Builds the state associated with [UploadedQuestions]
-class UploadedQuestionsState extends State<StatefulWidget>{
-
+class UploadedQuestionsState extends State<StatefulWidget> {
   /// The location of the app in the mobile.
   Directory appDirectory;
+
   /// The location of the place where videos are stored in the mobile.
   Directory videoDirectory;
+
   /// The path of the directory where the videos are stored.
   String videoDirectoryPath;
+
   /// The list of names of the uploaded questions.
-  List<String> list;
+  List<String> list = [];
+
   /// The email of the current logged in user.
   String email;
 
+  List<Widget> vidPlayers = [];
 
-    void initState(){
-      super.initState();
-      setter();
-    }
+  void initState() {
+    super.initState();
+    setter();
+  }
 
   /// Sets the initial values for the state variables.
   ///
   /// * [getFromSP()] returns the email of the current user.
   /// * [getExternalStorageDirectory()] returns the directory of the application.
   /// * Timer triggers the action after certain period of time.
-  void setter () async {
+  void setter() async {
     email = await getFromSP(EMAIL_KEY_SP);
     appDirectory = await getExternalStorageDirectory();
     videoDirectoryPath = '${appDirectory.path}/Drupal_Videos';
@@ -52,23 +58,26 @@ class UploadedQuestionsState extends State<StatefulWidget>{
 
     l = await getUploaded(email);
 
-    Timer(Duration(seconds: 1),(){
+    Timer(Duration(seconds: 1), () {
       setState(() {
         list = l;
+        // vidPlayers = getVideos();
       });
     });
   }
 
-
   ///Returns the list of [ChewieListItem] widget.
-  List<Widget> getVideos(){
-
+  List<Widget> getVideos() {
     List<Widget> listArray = List<Widget>();
-    if(list!=null) {
+    if (list != null) {
       for (var i = 0; i < list.length; i++) {
-        String path = videoDirectoryPath + "/"+list[i];
-        listArray.add(new ChewieListItem(
-            file: new File(path)));
+        String path = videoDirectoryPath + "/" + list[i];
+        // listArray.add(new ChewieListItem(
+        //     file: new File(path)));
+        listArray.add(VidPlayer(
+          vidUri: path,
+          vidSource: VidPlayer.FILE_SOURCE,
+        ));
       }
     }
     return listArray;
@@ -81,21 +90,22 @@ class UploadedQuestionsState extends State<StatefulWidget>{
   }
 
   @override
-  Widget build(BuildContext context){
-
-
+  Widget build(BuildContext context) {
     return new Scaffold(
-
-        drawer: NavDrawer(),
-
-        appBar: new AppBar(
-             title: new Text("Video Question App"),
-    ),
-         body: Container(
-            child: ListView(
-                children: getVideos(),
-    ),
-    )
+      drawer: NavDrawer(),
+      appBar: new AppBar(
+        title: new Text("Video Question App"),
+      ),
+      body: ListView.builder(
+          itemCount: list.length,
+          itemBuilder: (BuildContext itemContext, int index) {
+            return VidPlayer(
+              vidUri: videoDirectoryPath + "/" + list[index],
+              vidSource: VidPlayer.FILE_SOURCE,
+            );
+          }
+          // children: getVideos(),
+          ),
     );
-    }
+  }
 }

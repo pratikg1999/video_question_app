@@ -167,25 +167,27 @@ class DrawerState extends State<NavDrawer> {
                     '/ask', (Route<dynamic> route) => false);
                 Navigator.of(context).pushNamed('/answers');
                  }):ListTile(),
-
+isUser?
               ListTile(
               title: Text("Questions for me"),
               leading: Icon(Icons.question_answer),
               trailing: Icon(Icons.arrow_forward),
               onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/questionsAsked', (Route<dynamic> route) => false);
+               Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/ask', (Route<dynamic> route) => false);
+                Navigator.of(context).pushNamed('/questionsAsked');
               }
               
             //Navigator.of(context).pushNamed('/ask'),
-          ),
+          ):ListTile(),
           ListTile(
               title: Text("Answers To My Question"),
               leading: Icon(Icons.question_answer),
               trailing: Icon(Icons.arrow_forward),
               onTap: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/answersPage', (Route<dynamic> route) => false);
+                    '/ask', (Route<dynamic> route) => false);
+                Navigator.of(context).pushNamed('/answersPage');
               }
             //Navigator.of(context).pushNamed('/ask'),
           ),

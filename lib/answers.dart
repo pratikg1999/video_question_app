@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:teacher/vid_player.dart';
 import 'drawer.dart';
 import 'constants.dart';
 import 'dart:core';
@@ -18,7 +19,6 @@ class Answers extends StatefulWidget {
 
 /// Builds the state associated with [Answers]
 class AnswersState extends State<StatefulWidget> {
-
   /// The list of names of the answered videos.
   List list;
 
@@ -52,17 +52,25 @@ class AnswersState extends State<StatefulWidget> {
     setter();
   }
 
-
-  ///Returns the list of [ChewieListItemNet] widget.
+  // TODO check the comment for ChewieItem
+  ///Returns the list of [VidPlayer] widget.
   List<Widget> getVideos() {
     List<Widget> listArray = List<Widget>();
     if (list != null) {
       for (int i = 0; i < list.length; i++) {
-        listArray.add(new ChewieListItemNet(
-          url: "http://$serverIP:$serverPort/downloadAnswer/" +
+        // listArray.add(new ChewieListItemNet(
+        //   url: "http://$serverIP:$serverPort/downloadAnswer/" +
+        //       list[i]
+        //           .toString()
+        //           .substring(list[i].toString().lastIndexOf("/") + 1),
+        //   key: UniqueKey(),
+        // ));
+        listArray.add(VidPlayer(
+          vidUri: "http://$serverIP:$serverPort/downloadAnswer/" +
               list[i]
                   .toString()
                   .substring(list[i].toString().lastIndexOf("/") + 1),
+          vidSource: VidPlayer.NET_SOURCE,
           key: UniqueKey(),
         ));
       }
@@ -78,7 +86,7 @@ class AnswersState extends State<StatefulWidget> {
       appBar: new AppBar(
         title: new Text("Video Question App"),
       ),
-      body: Column(
+      body: ListView(
         children: getVideos(),
       ),
     );

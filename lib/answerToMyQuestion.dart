@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:teacher/vid_player.dart';
 import 'viewProfile.dart';
 import 'package:video_player/video_player.dart';
 import 'drawer.dart';
@@ -9,7 +10,6 @@ import 'chewieListNetwork.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'shared_preferences_helpers.dart';
-
 
 /// Page that shows answers to questions of currently logged-in user
 class AnswersOfMyQuestion extends StatefulWidget {
@@ -22,23 +22,22 @@ class AnswersOfMyQuestion extends StatefulWidget {
 /// UI for the Answers to my questions
 class AnswersOfMyQuestionState extends State<StatefulWidget> {
   /// The list of the answers to questions.
-  /// 
+  ///
   /// The format of questions is-
   /// ```[[q1_path, answers-to-q1-paths...][q2_path, answers-to-q2-paths...]]```
   List list;
 
-  /// List of details of the person with corresponding answers in [list] 
-  /// 
+  /// List of details of the person with corresponding answers in [list]
+  ///
   /// The format of [names] is-
   /// ```[[{}, details...][q2_path, details...]]```
-  /// 
+  ///
   /// The details of each person is a [Map] with fields- **Name, email, profile-pic, age, phone, **.
   List<List<Map<String, dynamic>>> names = [];
 
-
   /// Fetches the [list] of answers and corresponding [details] from the server
-  /// 
-  /// This function is called automatically by [initState()] 
+  ///
+  /// This function is called automatically by [initState()]
   Future<void> _setter() async {
     var token = await getCurrentTokenId();
     print(token);
@@ -84,9 +83,8 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
     _setter();
   }
 
-
   /// Shows the question with [quesPath] to the user in a dialog box
-  /// 
+  ///
   /// It fetches the [quesPath] from the server, creates a [VideoPlayer] and shows it in a dialog
   showQuestion(String quesPath) async {
     String fileName = quesPath.substring(quesPath.lastIndexOf("/") + 1);
@@ -125,7 +123,7 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
   }
 
   /// Generates the layout for the video/answers [list]
-  /// 
+  ///
   /// Corresponding to each question a card is generated with following struture
   /// ```html
   /// <html>
@@ -171,37 +169,47 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ViewPage(email: names[i][j]["Email"])),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ViewPage(email: names[i][j]["Email"])),
                 );
               },
             );
-            VideoPlayerController _controller = VideoPlayerController.network(
-                "http://$serverIP:$serverPort/downloadAnswer/" +
-                    list[i][j]
-                        .substring(list[i][j].toString().lastIndexOf("/") + 1));
-            Future<void> _initializeVideoPlayerFuture =
-                _controller.initialize().then((value) {
-              _controller.play();
-            });
+            // VideoPlayerController _controller = VideoPlayerController.network(
+            //     "http://$serverIP:$serverPort/downloadAnswer/" +
+            //         list[i][j]
+            //             .substring(list[i][j].toString().lastIndexOf("/") + 1));
+            // Future<void> _initializeVideoPlayerFuture =
+            //     _controller.initialize().then((value) {
+            //   _controller.play();
+            // });
 
-            Widget vidPlayer = FutureBuilder(
-              future: _initializeVideoPlayerFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  // If the VideoPlayerController has finished initialization, use
-                  // the data it provides to limit the aspect ratio of the VideoPlayer.
-                  return AspectRatio(
-                    aspectRatio: 16 / 9,
-                    // Use the VideoPlayer widget to display the video.
-                    child: VideoPlayer(_controller),
-                  );
-                } else {
-                  // If the VideoPlayerController is still initializing, show a
-                  // loading spinner.
-                  return Center(child: CircularProgressIndicator());
-                }
-              },
+            // Widget vidPlayer = FutureBuilder(
+            //   future: _initializeVideoPlayerFuture,
+            //   builder: (context, snapshot) {
+            //     if (snapshot.connectionState == ConnectionState.done) {
+            //       // If the VideoPlayerController has finished initialization, use
+            //       // the data it provides to limit the aspect ratio of the VideoPlayer.
+            //       return AspectRatio(
+            //         aspectRatio: 16 / 9,
+            //         // Use the VideoPlayer widget to display the video.
+            //         child: VideoPlayer(_controller),
+            //       );
+            //     } else {
+            //       // If the VideoPlayerController is still initializing, show a
+            //       // loading spinner.
+            //       return Center(child: CircularProgressIndicator());
+            //     }
+            //   },
+            // );
+
+            Widget vidPlayer = VidPlayer(
+              vidUri: "http://$serverIP:$serverPort/downloadAnswer/" +
+                  list[i][j]
+                      .substring(list[i][j].toString().lastIndexOf("/") + 1),
+              vidSource: VidPlayer.NET_SOURCE,
             );
+
             // Widget vPlayer = new ChewieListItemNet(
             //   url: "http://$serverIP:$serverPort/downloadAnswer/" +
             //       list[i][j]
