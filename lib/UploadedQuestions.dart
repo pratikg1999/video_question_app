@@ -34,14 +34,11 @@ class UploadedQuestionsState extends State<StatefulWidget> {
   /// The path of the directory where the videos are stored.
   String videoDirectoryPath;
 
-  /// The list of names of the uploaded questions.
-  List<String> list = [];
-
   /// The email of the current logged in user.
   String email;
 
   ///
-  List<String> listFromServerState = [];
+  List listFromServerState = [];
 
   List<Widget> vidPlayers = [];
 
@@ -79,9 +76,12 @@ class UploadedQuestionsState extends State<StatefulWidget> {
 
     Timer(Duration(seconds: 1), () {
       setState(() {
-        list = l;
         listFromServerState = listFromServer;
-        // vidPlayers = getVideos();
+        print("VVVVVVVVVVVVVVVVVVVVV");
+        for(var i = 0 ; i < listFromServer.length ; i++){
+          listFromServer[i] = listFromServer[i].substring(listFromServer[i].lastIndexOf("\\")+1);
+        }
+        print(listFromServerState.toString());
       });
     });
   }
@@ -89,15 +89,24 @@ class UploadedQuestionsState extends State<StatefulWidget> {
   ///Returns the list of [ChewieListItem] widget.
   List<Widget> getVideos() {
     List<Widget> listArray = List<Widget>();
-    if (list != null) {
-      for (var i = 0; i < list.length; i++) {
-        String path = videoDirectoryPath + "/" + list[i];
-//         listArray.add(new ChewieListItem(
-//             file: new File(path)));
-        listArray.add(VidPlayer(
-          vidUri: path,
-          vidSource: VidPlayer.FILE_SOURCE,
-        ));
+    if (listFromServerState != null) {
+      for (var i = 0; i < listFromServerState.length; i++) {
+        String path = videoDirectoryPath + "/" + listFromServerState[i];
+        File temp = new File(path);
+        if(temp.existsSync()){
+          print("IN IFFFFFFFFFFFF");
+          listArray.add(VidPlayer(
+            vidUri: path,
+            vidSource: VidPlayer.FILE_SOURCE,
+          ));
+        }
+        else {
+          print("IN ELSEEEEEEE");
+          listArray.add(VidPlayer(
+            vidUri:"http://$serverIP:$serverPort/downloadFile/${listFromServerState[i]}",
+            vidSource: VidPlayer.NET_SOURCE,
+          ));
+        }
       }
     }
     return listArray;
@@ -116,16 +125,9 @@ class UploadedQuestionsState extends State<StatefulWidget> {
       appBar: new AppBar(
         title: new Text("Video Question App"),
       ),
-      body: ListView.builder(
-          itemCount: list.length,
-          itemBuilder: (BuildContext itemContext, int index) {
-            return VidPlayer(
-              vidUri: videoDirectoryPath + "/" + list[index],
-              vidSource: VidPlayer.FILE_SOURCE,
-            );
-          }
-          // children: getVideos(),
-          ),
+      body: new Column(
+        children: getVideos(),
+      ),
     );
   }
 }
