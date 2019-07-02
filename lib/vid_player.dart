@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import "package:video_player/video_player.dart";
@@ -9,6 +10,7 @@ class VidPlayer extends StatefulWidget {
   static const String NET_SOURCE = "network";
   static const String ASSET_SOURCE = "asset";
   static const String FILE_SOURCE = "file";
+
   VidPlayer({this.vidUri, this.vidSource, Key key}) : super(key: key);
 
   @override
@@ -20,6 +22,9 @@ class VidPlayer extends StatefulWidget {
 class VidPlayerState extends State<VidPlayer> {
   VideoPlayerController _controller;
   Future<void> _controllerInit;
+  double curVolume = 1.0;
+  StreamController<Duration> seekController = new StreamController<Duration>();
+
   // bool isPlaying = false;
   @override
   void initState() {
@@ -33,17 +38,16 @@ class VidPlayerState extends State<VidPlayer> {
     _controllerInit = _controller.initialize()
       ..then((value) {
         _controller.setLooping(true);
-
+        curVolume = _controller.value.volume;
         // _controller.play();
 
         // isPlaying = true;
       });
-    // _controller.addListener(() {
-    //   if(_controller.value.position == _controller.value.duration){
-    //     _controller.seekTo(Duration(seconds: 0));
-    //     _controller.pause();
-    //   }
-    // });
+    _controller.addListener(() {
+      if (_controller.value.initialized) {
+        seekController.sink.add(_controller.value.position);
+      }
+    });
     super.initState();
   }
 
@@ -67,7 +71,9 @@ class VidPlayerState extends State<VidPlayer> {
             return player();
           } else {
             print("connection state is not connected");
-            return AspectRatio(aspectRatio: 16/9, child: Center(child: CircularProgressIndicator()));
+            return AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Center(child: CircularProgressIndicator()));
           }
         },
       ),
@@ -95,9 +101,84 @@ class VidPlayerState extends State<VidPlayer> {
             child: VideoPlayer(_controller),
           ),
           playPauseButton(),
+          Positioned(
+            child: Container(
+              color: Colors.black.withAlpha(80),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: drawSeekBar(),
+                    ),
+                  ),
+                  muteButton(),
+                ],
+              ),
+            ),
+            bottom: 1,
+            left: 1, //This is necessary for bounding the row and expanded
+            right: 1, // This is necessary for bounding the row and expanded
+          ),
+          // drawSeekBar(),
         ],
       ),
     );
+  }
+
+  Widget drawSeekBar() {
+    return StreamBuilder(
+      stream: seekController.stream,
+      builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
+        if (snapshot.hasData) {
+          return Slider(
+            min: 0.0,
+            max: _controller.value.duration.inMicroseconds.toDouble(),
+            value: snapshot.data.inMicroseconds.toDouble(),
+            onChanged: (newValue) {print("abcd ${snapshot.data}"); _controller.seekTo(Duration(microseconds: newValue.toInt()));},
+          );
+        } else {
+          return Slider(
+            min: 0.0,
+            max: 1.0,
+            value: 0,
+            onChanged: null,
+          );
+        }
+      },
+    );
+  }
+
+  void doMute() {
+    if (_controller.value.volume > 0) {
+      curVolume = _controller.value.volume;
+      _controller.setVolume(0.0);
+    } else {
+      _controller.setVolume(curVolume);
+    }
+    setState(() {});
+  }
+
+  Widget muteButton() {
+    if (_controller.value.volume == 0.0) {
+      return IconButton(
+        icon: Icon(
+          Icons.volume_off,
+          color: Colors.white,
+        ),
+        color: Colors.black.withAlpha(200),
+        onPressed: doMute,
+      );
+    } else {
+      return IconButton(
+        icon: Icon(
+          Icons.volume_up,
+          color: Colors.white,
+        ),
+        color: Colors.black.withAlpha(200),
+        onPressed: doMute,
+      );
+    }
   }
 
   Widget playPauseButton() {
@@ -121,7 +202,14 @@ class VidPlayerState extends State<VidPlayer> {
 
   @override
   void dispose() {
+    print("video disposing");
     _controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    print("video deactivating");
+    super.deactivate();
   }
 }
