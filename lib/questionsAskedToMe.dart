@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teacher/vid_player.dart';
 import 'answer_video.dart';
 import 'dart:core';
 import 'chewieListNetwork.dart';
@@ -61,13 +62,17 @@ class QuestionsAskedState extends State<QuestionsAsked> {
       for (var index = 0; index < list.length; index++) {
         listArray.add(new Column(
           children: <Widget>[
-            new ChewieListItemNet(
-              url: "http://$serverIP:$serverPort/downloadFile/" +
+            // new ChewieListItemNet(
+            //   url: "http://$serverIP:$serverPort/downloadFile/" +
+            //       list[index]
+            //           .toString()
+            //           .substring(list[index].toString().lastIndexOf("/") + 1),
+            //   key: UniqueKey(),
+            // ),
+            VidPlayer(vidUri: "http://$serverIP:$serverPort/downloadFile/" +
                   list[index]
                       .toString()
-                      .substring(list[index].toString().lastIndexOf("\\") + 1),
-              key: UniqueKey(),
-            ),
+                      .substring(list[index].toString().lastIndexOf("/") + 1), vidSource: VidPlayer.NET_SOURCE,),
             Row(
               children: <Widget>[
                 Padding(

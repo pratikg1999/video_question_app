@@ -41,7 +41,8 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
   Future<void> _setter() async {
     var token = await getCurrentTokenId();
     print(token);
-    print("http://$serverIP:$serverPort/getAnswersToMyQuestions?tokenId=$token");
+    print(
+        "http://$serverIP:$serverPort/getAnswersToMyQuestions?tokenId=$token");
     var response = await http.get(
         Uri.encodeFull(
             "http://$serverIP:$serverPort/getAnswersToMyQuestions?tokenId=$token"),
@@ -57,7 +58,7 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
               "http://$serverIP:$serverPort/getUserFromAnswer?ansName=" +
                   map[i][j]
                       .toString()
-                      .substring(map[i][j].toString().lastIndexOf("\\") + 1));
+                      .substring(map[i][j].toString().lastIndexOf("/") + 1));
           var resJson = jsonDecode(response.body);
           curQueData.add(resJson);
         }
@@ -87,7 +88,7 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
   ///
   /// It fetches the [quesPath] from the server, creates a [VideoPlayer] and shows it in a dialog
   showQuestion(String quesPath) async {
-    String fileName = quesPath.substring(quesPath.lastIndexOf("\\") + 1);
+    String fileName = quesPath.substring(quesPath.lastIndexOf("/") + 1);
     print("http://$serverIP:$serverPort/downloadFile/$fileName");
     VideoPlayerController quesController = VideoPlayerController.network(
         "http://$serverIP:$serverPort/downloadFile/$fileName");
@@ -158,9 +159,10 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
           //               "q $i No Answer Available for this question yet"))));
           // } else {
           List<Widget> answers = [];
-          answers.add(ChewieListItemNet(
-              url:
-                  "http://$serverIP:$serverPort/downloadFile/${list[i][0].toString().substring(list[i][0].toString().lastIndexOf("\\") + 1)}",
+          answers.add(VidPlayer(
+              vidUri:
+                  "http://$serverIP:$serverPort/downloadFile/${list[i][0].toString().substring(list[i][0].toString().lastIndexOf("/") + 1)}",
+              vidSource: VidPlayer.NET_SOURCE,
               key: UniqueKey()));
           for (int j = 1; j < list[i].length; j++) {
             print("$i $j");

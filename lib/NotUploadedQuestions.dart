@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:core';
 import 'package:path_provider/path_provider.dart';
+import 'package:teacher/vid_player.dart';
 import 'chewieListItem.dart';
 import 'constants.dart';
 import 'drawer.dart';
@@ -32,6 +33,7 @@ class QuestionsState extends State<Questions>{
   /// The email of the current logged in user.
   String email;
 
+  List<Widget> listArray = [];
   /// Sets the initial values for the state variables.
   ///
   /// * [getFromSP()] returns the email of the current user.
@@ -48,6 +50,7 @@ class QuestionsState extends State<Questions>{
     Timer(Duration(seconds: 1),(){
       setState(() {
         list = l;
+        getVideos();
       });
    });
 
@@ -76,15 +79,19 @@ class QuestionsState extends State<Questions>{
   ///Returns the list of [ChewieListItem] widget.
   List<Widget> getVideos(){
 
-    List<Widget> listArray = List<Widget>();
+    // List<Widget> listArray = List<Widget>();
     if(list!=null) {
       for (var index = 0; index < list.length; index++) {
         listArray.add(new Column(
 
           children: <Widget>[
-            new ChewieListItem(
-              file: new File(videoDirectoryPath + "/" + list[index]),
-              key: UniqueKey()
+            // new ChewieListItem(
+            //   file: new File(videoDirectoryPath + "/" + list[index]),
+            //   key: UniqueKey()
+            // ),
+            VidPlayer(
+              vidUri: videoDirectoryPath + "/" + list[index],
+              vidSource: VidPlayer.FILE_SOURCE,
             ),
             Row(
               children: <Widget>[
@@ -108,6 +115,7 @@ class QuestionsState extends State<Questions>{
                         removeFromFile(email, list[index]);
                         setState(() {
                           list.removeAt(index);
+                          listArray.removeAt(index);
                         });
                       },
                     )
@@ -137,13 +145,12 @@ class QuestionsState extends State<Questions>{
         appBar: new AppBar(
           title: new Text("Video Question App"),
         ),
-        body: Container(
-          child: ListView(
-            children: getVideos(),
-          ),
-
+        body: ListView.builder(
+          itemCount: list.length,
+          itemBuilder: (BuildContext context, int index){
+            return listArray[index];
+          },
         )
-
     );
   }
 }

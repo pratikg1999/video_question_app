@@ -40,7 +40,7 @@ class UploadedQuestionsState extends State<StatefulWidget> {
   ///
   List listFromServerState = [];
 
-  List<Widget> vidPlayers = [];
+  List<Widget> listArray = [];
 
   void initState() {
     super.initState();
@@ -79,16 +79,17 @@ class UploadedQuestionsState extends State<StatefulWidget> {
         listFromServerState = listFromServer;
         print("VVVVVVVVVVVVVVVVVVVVV");
         for(var i = 0 ; i < listFromServer.length ; i++){
-          listFromServer[i] = listFromServer[i].substring(listFromServer[i].lastIndexOf("\\")+1);
+          listFromServer[i] = listFromServer[i].substring(listFromServer[i].lastIndexOf("/")+1);
         }
         print(listFromServerState.toString());
+        getVideos();
       });
     });
   }
 
   ///Returns the list of [ChewieListItem] widget.
   List<Widget> getVideos() {
-    List<Widget> listArray = List<Widget>();
+    // List<Widget> listArray = List<Widget>();
     if (listFromServerState != null) {
       for (var i = 0; i < listFromServerState.length; i++) {
         String path = videoDirectoryPath + "/" + listFromServerState[i];
@@ -125,9 +126,13 @@ class UploadedQuestionsState extends State<StatefulWidget> {
       appBar: new AppBar(
         title: new Text("Video Question App"),
       ),
-      body: new Column(
-        children: getVideos(),
-      ),
+      body: ListView.builder(
+        itemCount: listFromServerState.length,
+        itemBuilder: (BuildContext context , int index){
+          print("itembuilder $index");
+          return listArray[index];
+        },
+      )
     );
   }
 }
