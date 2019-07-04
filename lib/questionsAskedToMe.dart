@@ -112,7 +112,7 @@ class QuestionsAskedState extends State<QuestionsAsked> {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("Video Question App"),
+          title: new Text("Questions for me"),
         ),
         drawer: NavDrawer(),
         body: Container(

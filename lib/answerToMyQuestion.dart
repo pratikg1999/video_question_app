@@ -265,7 +265,7 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
     return new Scaffold(
         drawer: NavDrawer(),
         appBar: new AppBar(
-          title: new Text("Video Question App"),
+          title: new Text("Answers to my questions"),
         ),
         body: SingleChildScrollView(
           child: Column(

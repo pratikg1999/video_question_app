@@ -124,7 +124,7 @@ class UploadedQuestionsState extends State<StatefulWidget> {
     return new Scaffold(
       drawer: NavDrawer(),
       appBar: new AppBar(
-        title: new Text("Video Question App"),
+        title: new Text("My uploaded questions"),
       ),
       body: ListView.builder(
         itemCount: listFromServerState.length,

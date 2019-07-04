@@ -143,7 +143,7 @@ class QuestionsState extends State<Questions>{
     return new Scaffold(
         drawer: NavDrawer(),
         appBar: new AppBar(
-          title: new Text("Video Question App"),
+          title: new Text("Not uploaded questions"),
         ),
         body: ListView.builder(
           itemCount: list.length,
