@@ -69,7 +69,7 @@ class AnswersState extends State<StatefulWidget> {
           vidUri: "http://$serverIP:$serverPort/downloadAnswer/" +
               list[i]
                   .toString()
-                  .substring(list[i].toString().lastIndexOf("/") + 1),
+                  .substring(list[i].toString().lastIndexOf("\\") + 1),
           vidSource: VidPlayer.NET_SOURCE,
           key: UniqueKey(),
         ));
@@ -84,7 +84,7 @@ class AnswersState extends State<StatefulWidget> {
     return new Scaffold(
       drawer: NavDrawer(),
       appBar: new AppBar(
-        title: new Text("Video Question App"),
+        title: new Text("My Answers"),
       ),
       body: ListView(
         children: getVideos(),

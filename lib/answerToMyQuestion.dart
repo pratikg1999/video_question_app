@@ -206,7 +206,7 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
             Widget vidPlayer = VidPlayer(
               vidUri: "http://$serverIP:$serverPort/downloadAnswer/" +
                   list[i][j]
-                      .substring(list[i][j].toString().lastIndexOf("/") + 1),
+                      .substring(list[i][j].toString().lastIndexOf("\\") + 1),
               vidSource: VidPlayer.NET_SOURCE,
             );
 
@@ -263,7 +263,7 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
     return new Scaffold(
         drawer: NavDrawer(),
         appBar: new AppBar(
-          title: new Text("Video Question App"),
+          title: new Text("Answers To My Question"),
         ),
         body: SingleChildScrollView(
           child: Column(
