@@ -19,6 +19,7 @@ const PHONE_KEY_SP = "Phone";
 /// **Interests** key of shared preferences
 const INTERESTS_KEY_SP = "Interests";
 
+const LOADING_KEY_SP = "loading";
 
 /// saves the [token] of the current login
 saveCurrentLogin(String  token) async {

@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:teacher/edit_interests.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -45,6 +45,8 @@ class ProfilePageState extends State<ProfilePage> {
   String age;
   ///Previous phone number set by the user.
   String phone;
+  ///Previous interests set by the user
+  String interests;
 
   ///Stores updated user_name.
   String _name;
@@ -274,6 +276,12 @@ class ProfilePageState extends State<ProfilePage> {
                       height: 20.0,
                     ),
                     Center(
+                      child: interestButton(),
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Center(
                       child: saveButton(),
                     ),
                   ],
@@ -301,6 +309,33 @@ class ProfilePageState extends State<ProfilePage> {
             ),
           ),
           onTap: saveChanges,
+        ),
+      ),
+    );
+  }
+
+  ///Button to edit interests of user on tap.
+  Widget interestButton() {
+    return Container(
+      height: 30.0,
+      width: 95.0,
+      child: Material(
+        borderRadius: BorderRadius.circular(10.0),
+        shadowColor: Colors.greenAccent,
+        color: Colors.green,
+        elevation: 7.0,
+        child: GestureDetector(
+          child: Container(
+            child: Center(
+              child: Text("Edit your interests"),
+            ),
+          ),
+          onTap:() {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => editInterests()),
+            );
+          },
         ),
       ),
     );

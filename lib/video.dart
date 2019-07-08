@@ -92,22 +92,22 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   /// Performas initial set-up of the camera.
   ///
   /// By-default back-camera is used to record videos.
-//  Future<void> _setUpCameras() async {
-//try {
-//      // initialize cameras.
-//      cameras = await availableCameras();
-//      // initialize camera controllers.
-//      controller = new CameraController(cameras[0], ResolutionPreset.medium);
+  Future<void> _setUpCameras() async {
+try {
+      // initialize cameras.
+      cameras = await availableCameras();
+      // initialize camera controllers.
+      controller = new CameraController(cameras[0], ResolutionPreset.medium);
+      await controller.initialize();
+    } on CameraException catch (e) {
+      print(e);
 //      await controller.initialize();
-//    } on CameraException catch (e) {
-//      print(e);
-//      await controller.initialize();
-//    }
-//    if (mounted==false) return;
-//    setState(() {
-//
-//    });
-//  }
+    }
+    if (mounted==false) return;
+    setState(() {
+
+    });
+  }
 
   /// Takes External Storage write permission and sets up the camera.
   ///
@@ -115,23 +115,21 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   @override
   void initState() {
     super.initState();
-    requestWritePermission();
+    requestPermissions();
      availableCameras()
          .then((availableCameras) {
        cameras = availableCameras;
-       print(cameras);
        if (cameras.length > 0) {
          setState(() {
-           selectedCameraIdx = 0;
+           selectedCameraIdx = 1;
          });
-         print(selectedCameraIdx);
          _onCameraSwitched(cameras[selectedCameraIdx]).then((void v) {});
        }
      })
          .catchError((err) {
        print('Error: $err.code\nError Message: $err.message');
      });
-    //_setUpCameras();
+     //_setUpCameras();
   }
 
   @override
@@ -220,7 +218,6 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   /// Display a row of toggle to select the camera (or a message if no camera is available).
   Widget _cameraTogglesRowWidget() {
     if (cameras == null) {
-      print("cameras is null");
       return Row();
     }
 
@@ -304,11 +301,8 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     });
 
     try {
-      print("initializing");
       await controller.initialize();
-      print("intialze complete");
     } on CameraException catch (e) {
-      print("11111111111111111");
       _showCameraException(e);
     }
 
@@ -322,7 +316,7 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   /// The next camera in the [cameras] is selected
   void _onSwitchCamera() {
     selectedCameraIdx =
-        selectedCameraIdx < cameras.length - 1 ? selectedCameraIdx + 1 : 0;
+        selectedCameraIdx == 1 ? 0:1;
     CameraDescription selectedCamera = cameras[selectedCameraIdx];
 
     _onCameraSwitched(selectedCamera);
@@ -506,18 +500,14 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
     try {
       //await controller.stopVideoRecording();
       if(toUpload){
-        print("SSSSSSSSSSSSSSS");
         uploadFile(videoPath);
       }
         
       else{
-        print("HHHHHHHHHHHHHHHH");
         String newPath = videoDirectory + "/" + currentTime + "NotUploaded.mp4";
-        print(newPath);
         File(videoPath).renameSync(newPath);
       }
     } on CameraException catch (e) {
-      print("333333333333333333333");
       _showCameraException(e);
       return null;
     }
@@ -528,9 +518,6 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   /// Helper method called to show exceptions.
   void _showCameraException(CameraException e) {
     String errorText = 'Error: ${e.code}\nError Message: ${e.description}';
-    print(errorText);
-    print("PPPPPPPPPPPPPPPPPPPPPPPP");
-    print("Error: ${e.code}\n${e.description}");
 
     Fluttertoast.showToast(
         msg: 'Error: ${e.code}\n${e.description}',

@@ -184,8 +184,10 @@ class _LoginPageState extends State<LoginPage> {
         print(request);
         print(_email);
         print(_password);
-        // print("headers: ${request.headers}");
+        print("headers: ${request.headers}");
         var response = await request.send();
+        print("OOOOOOOOOOOOOOOOOOOOOO");
+        print(response.statusCode);
         if (response.statusCode == 200) {
           var resData = await response.stream.bytesToString();
           var resDataJson = jsonDecode(resData.toString());

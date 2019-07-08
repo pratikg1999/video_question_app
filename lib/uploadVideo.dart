@@ -15,6 +15,7 @@ import 'package:teacher/shared_preferences_helpers.dart';
 /// * [DateTime.now()] is used to get the current time.
 /// * [renameSync()] is used to rename the file.
 uploadFile(String filePath) async {
+  saveInSP(LOADING_KEY_SP, "true");
   var uri = new Uri.http('$serverIP:$serverPort', '/uploadFile');
 
   var token = await getCurrentTokenId();
@@ -27,6 +28,7 @@ uploadFile(String filePath) async {
   request.fields['tokenId'] = token;
 
   request.send().then((response) {
+    saveInSP(LOADING_KEY_SP, "false");
     if (response.statusCode == 200){
         Fluttertoast.showToast(
         msg: 'Successfully uploaded',

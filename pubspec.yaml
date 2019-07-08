@@ -29,6 +29,7 @@ dependencies:
   shared_preferences: ^0.4.2
   chewie : ^0.9.7
   image_picker: ^0.4.12
+  flutter_spinkit: ^3.1.0
   # youtube_player: ^3.4.1
 
     # The following adds the Cupertino Icons font to your application.

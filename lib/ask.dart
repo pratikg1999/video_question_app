@@ -3,6 +3,7 @@ import 'package:teacher/shared_preferences_helpers.dart';
 import 'package:teacher/video.dart';
 import 'package:teacher/drawer.dart';
 import 'constants.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'viewProfile.dart';
 
 /// Builds the Ask page.
@@ -24,11 +25,13 @@ class AskState extends State<Ask> {
   ///[_email] used to set the email in the drawer.
   String _email;
 
+  String load;
 
   /// Retrieves the name and email of current user from shared preferences.
   void getNameAndEmail() async {
     _email = EMAIL;
     _name = await getFromSP(USER_NAME_SP);
+    load = await getFromSP(LOADING_KEY_SP);
     setState(() {
 
     });
@@ -44,9 +47,25 @@ class AskState extends State<Ask> {
   @override
   Widget build(BuildContext context) {
 
+    Widget temp;
+    print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+    print(load);
+    if(load == "true"){
+      temp = new Row(
+        children: <Widget>[
+          new Text("Video Question App    "),
+          SpinKitRing(color: Colors.white, lineWidth: 2.0,)
+        ],
+      );
+    }
+    else{
+      temp = new Text("Video Question App ");
+    }
+
+
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("Video Question App"),
+          title: temp,
         ),
         drawer : NavDrawer(),
         body: new Center(
