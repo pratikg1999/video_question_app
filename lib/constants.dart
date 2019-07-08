@@ -1,6 +1,6 @@
 
 /// Server's IP address
-final String serverIP =  "104.237.9.77"; //"10.196.22.121";//
+final String serverIP =  "104.237.9.77";//"";//"10.196.22.121"; //"104.237.9.77"; //
 
 /// Server's port address
 final String serverPort = "50000";   

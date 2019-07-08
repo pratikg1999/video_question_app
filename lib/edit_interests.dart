@@ -37,16 +37,19 @@ class editInterestsState extends State<editInterests> {
   void getInfo() async {
     interests=await getFromSP(INTERESTS_KEY_SP);
     email=await getFromSP(EMAIL_KEY_SP);
+    if(interests!=null && interests.length>2){
     l=interests.split(",");
     for(int i=0;i<l.length;i++)
       {
-        l[i]=l[i].substring(1,l[i].length);
+        l[i]= l[i].trim();
+    //     l[i]=l[i].substring(,l[i].length);
       }
-    //l[0]=l[0].substring(1, l[0].length);
+    l[0]=l[0].substring(1, l[0].length);
     l[l.length-1]=l[l.length-1].substring(0,l[l.length-1].length-1);
     for(int i=0;i<l.length;i++)
     {
       values[l[i]]=true;
+    }
     }
     setState(() {
 
