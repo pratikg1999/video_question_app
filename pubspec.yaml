@@ -34,6 +34,7 @@ dependencies:
     # The following adds the Cupertino Icons font to your application.
     # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+  flutter_launcher_icons: "^0.7.2"
 
 dev_dependencies:
   flutter_test:
@@ -43,6 +44,12 @@ dev_dependencies:
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
 # The following section is specific to Flutter.
+
+flutter_icons:
+  android: "launcher_icon" 
+  ios: true
+  image_path: "assets/icon/icon.png"
+
 flutter:
 
   # The following line ensures that the Material Icons font is
@@ -54,6 +61,7 @@ flutter:
     - assets/images/profile_pic.jpg
     - assets/images/profile_pic.png
     - assets/images/View_pic.jpg
+    - assets/icon/icon.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
