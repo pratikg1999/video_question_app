@@ -185,6 +185,7 @@ class _LoginPageState extends State<LoginPage> {
         print(_email);
         print(_password);
         // print("headers: ${request.headers}");
+        // print(request.toString());
         var response = await request.send();
         if (response.statusCode == 200) {
           var resData = await response.stream.bytesToString();
@@ -375,7 +376,7 @@ class _LoginPageState extends State<LoginPage> {
     return new Scaffold(
       key: _loginScaffoldKey,
       appBar: new AppBar(
-        title: new Text("Video Question App"),
+        title: new Text("Login page"),
       ),
       body: Container(
         decoration: new BoxDecoration(

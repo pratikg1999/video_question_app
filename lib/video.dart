@@ -115,14 +115,14 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
   @override
   void initState() {
     super.initState();
-    requestWritePermission();
+    requestPermissions();
      availableCameras()
          .then((availableCameras) {
        cameras = availableCameras;
        print(cameras);
        if (cameras.length > 0) {
          setState(() {
-           selectedCameraIdx = 0;
+           selectedCameraIdx = 1;
          });
          print(selectedCameraIdx);
          _onCameraSwitched(cameras[selectedCameraIdx]).then((void v) {});

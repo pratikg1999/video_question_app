@@ -37,7 +37,7 @@ class VidPlayerState extends State<VidPlayer> {
     }
     _controllerInit = _controller.initialize()
       ..then((value) {
-        _controller.setLooping(true);
+        // _controller.setLooping(true);
         curVolume = _controller.value.volume;
         // _controller.play();
 
@@ -46,6 +46,11 @@ class VidPlayerState extends State<VidPlayer> {
     _controller.addListener(() {
       if (_controller.value.initialized) {
         seekController.sink.add(_controller.value.position);
+        if (_controller.value.position >= _controller.value.duration) {
+          // _controller.pause(); produces error
+          // _controllerInit = _controller.initialize();
+          setState(() {});
+        }
       }
     });
     super.initState();
@@ -84,6 +89,10 @@ class VidPlayerState extends State<VidPlayer> {
     if (_controller.value.isPlaying) {
       _controller.pause();
     } else {
+      if (_controller.value.position >= _controller.value.duration) {
+        // _controller.pause();
+        _controller.seekTo(Duration(microseconds: 0));
+      }
       _controller.play();
     }
     setState(() {});
@@ -91,6 +100,7 @@ class VidPlayerState extends State<VidPlayer> {
 
   Widget player() {
     return GestureDetector(
+      
       onTap: doOnTap,
       child: Stack(
         alignment: Alignment.center,
@@ -135,7 +145,17 @@ class VidPlayerState extends State<VidPlayer> {
             min: 0.0,
             max: _controller.value.duration.inMicroseconds.toDouble(),
             value: snapshot.data.inMicroseconds.toDouble(),
-            onChanged: (newValue) {print("abcd ${snapshot.data}"); _controller.seekTo(Duration(microseconds: newValue.toInt()));},
+            onChanged: (newValue) {
+              print("abcd ${snapshot.data}");
+              bool toPause = false;
+              if(_controller.value.position>=_controller.value.duration){
+                toPause = true;
+              }
+              _controller.seekTo(Duration(microseconds: newValue.toInt()));
+              if(toPause){
+                _controller.pause();
+              }
+            },
           );
         } else {
           return Slider(
