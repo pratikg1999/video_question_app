@@ -546,8 +546,8 @@ class _VideoRecorderExampleState extends State<VideoRecorderExample> {
 class VideoRecorderApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: VideoRecorderExample(),
+    return Scaffold(
+      body: VideoRecorderExample(),
     );
   }
 }

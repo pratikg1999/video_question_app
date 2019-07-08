@@ -42,7 +42,7 @@ class ViewPageState extends State<ViewPage> {
   /// *Phone
   /// *e-mail
   /// *Interests.
-  String fullName;
+  String fullName = "loading...";
   String age;
   String phone;
   String email;
@@ -136,7 +136,7 @@ class ViewPageState extends State<ViewPage> {
             height: 15.0,
           ),
           Text(
-            "e",
+            fullName ,
             style: TextStyle(
                 fontFamily: "FiraSans",
                 fontWeight: FontWeight.bold,

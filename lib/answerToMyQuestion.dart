@@ -167,7 +167,24 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
           for (int j = 1; j < list[i].length; j++) {
             print("$i $j");
             Widget nameWidget = GestureDetector(
-              child: Text((names[i])[j]["Name"]),
+              child: RichText(
+                text: new TextSpan(
+                  style: new TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black,
+                  ),
+                  children: <TextSpan>[
+                    new TextSpan(text: 'Answer by - '),
+                    new TextSpan(
+                        text: (names[i])[j]["Name"],
+                        style: new TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic)),
+                  ],
+                ),
+              ),
+              // child: Text(
+              //   "Answer by- " + (names[i])[j]["Name"],
+              //   style: TextStyle(fontSize: 16),
+              // ),
               onTap: () {
                 Navigator.push(
                   context,
@@ -230,17 +247,14 @@ class AnswersOfMyQuestionState extends State<StatefulWidget> {
                 elevation: 5.0,
                 child: Column(
                   children: <Widget>[
-                    GestureDetector(
-                      child: Text(
-                        "Question $i",
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontStyle: FontStyle.italic,
-                            decoration: TextDecoration.underline),
+                    Text(
+                      "Question $i",
+                      style: TextStyle(
+                        // color: Colors.blue,
+                        // fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
                       ),
-                      onTap: () async {
-                        await showQuestion(list[i][0]);
-                      },
                     ),
                     Column(
                       children: answers,
