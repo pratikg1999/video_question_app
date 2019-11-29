@@ -2,6 +2,10 @@
 
 A flutter application to ask and answer questions in video format.
 
+The task of the app is to enable the users to ask questions in video format (video format enables give a clarity to the context of the answer and enables an respondent to determine the level of detail to be present in the answer). An emotion and text detection technique was used to identify the subject of the question, emotion of inquisitive. The questions can be seen by other users with matching interests and he/she may answer the question accordingly.
+
+Flutter was used to develop the app and Spring boot was used for the backend.
+
 This project was developed as a part of Ekalavaya Summer Internship 2019 at IIT Bombay
 
 ## How to use
